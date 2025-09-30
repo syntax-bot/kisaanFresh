@@ -1,4 +1,4 @@
-# KIsan Fresh
+# Kisan Fresh
 
 **KisanFresh** a digital marketplace connecting farmers and buyers ,helping farmers set competitive rates and buyers make informed decisions.
 
