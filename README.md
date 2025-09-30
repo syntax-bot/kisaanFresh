@@ -1,4 +1,4 @@
-# KIsan Fresh
+# Kisan Fresh
 
 **KisanFresh** a digital marketplace connecting farmers and buyers ,helping farmers set competitive rates and buyers make informed decisions.
 
@@ -8,7 +8,7 @@
 
 - secure payment  and fair delivery
 
-- Product aging detection : Highlights products that are getting old to help farmers manage inventory and pricingnew edit by samarth 
+- Product aging detection : Highlights products that are getting old to help farmers manage inventory and pricing new edit by samarth 
 ### Benefits 
 Helps farmers maximize profits and reduce waste 
 
