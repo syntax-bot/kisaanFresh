@@ -5,4 +5,4 @@
 ### Features
 - Buy, sell, and bid on agricultural products
 - Minimum bid price prediction using data analysis
-- Product aging detection : Highlights products that are getting old to help farmers manage inventory and pricing
+- Product aging detection : Highlights products that are getting old to help farmers manage inventory and pricingnew edit by samarth 
