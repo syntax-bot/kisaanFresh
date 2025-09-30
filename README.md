@@ -12,3 +12,4 @@
 ### Benefits 
 Helps farmers maximize profits and reduce waste 
 
+new edit by samarth 
