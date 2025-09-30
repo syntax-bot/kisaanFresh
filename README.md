@@ -1,6 +1,6 @@
-# kisaanFresh
+# KIsan Fresh
 
-**kisaanFresh** a digital marketplace connecting farmers and buyers ,helping farmers set competitive rates and buyers make informed decisions.
+**KisanFresh** a digital marketplace connecting farmers and buyers ,helping farmers set competitive rates and buyers make informed decisions.
 
 ### Features
 - Buy, sell, and bid on agricultural products
