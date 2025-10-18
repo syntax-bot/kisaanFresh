@@ -1,16 +1,21 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState } from "react";
+import ItemCard from "./components/ItemCard";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <>
-      <h1 className='text-2xl'>Hello kisans</h1>
-
+      <h1 className="text-2xl">Hello kisans</h1>
+      <ItemCard
+        name="banana"
+        oldPrice="50"
+        newPrice="30"
+        rating={4.2}
+        image="https://images.pexels.com/photos/1093038/pexels-photo-1093038.jpeg"
+      />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
