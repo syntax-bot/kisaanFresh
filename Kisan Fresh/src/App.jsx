@@ -6,7 +6,6 @@ function App() {
 
   return (
     <>
-      <h1 className="text-2xl">Hello kisans</h1>
       <ItemCard
         name="banana"
         oldPrice="50"
