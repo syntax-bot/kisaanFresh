@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Light Mode */
+  --color-primary: #2E7D32;
+  --color-secondary: #FBC02D;
+  --color-accent: #81C784;
+  --color-background: #F9F9F6;
+  --color-surface: #FFFFFF;
+  --color-text: #333333;
+  --color-muted: #666666;
+}
+
+/* Dark Mode (class-based) */
+.dark {
+  --color-primary: #81C784;
+  --color-secondary: #FFD54F;
+  --color-accent: #43A047;
+  --color-background: #121212;
+  --color-surface: #1E1E1E;
+  --color-text: #E0E0E0;
+  --color-muted: #9E9E9E;
+}
