@@ -16,6 +16,9 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./store/store.js";
 import CartPage from "./components/cart/Cart.jsx";
+import RegistrationPage from "./components/Auth/register.jsx";
+import LoginPage from "./components/Auth/login.jsx";
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,6 +26,8 @@ const router = createBrowserRouter(
       <Route path="" element={<App />} />
       <Route path="/item/:id" element={<ItemPage />} />
       <Route path="/cart" element={<CartPage />} />
+      <Route path="/register" element={<RegistrationPage />} />
+      <Route path="/login" element={<LoginPage />} />
     </Route>
   )
 );
