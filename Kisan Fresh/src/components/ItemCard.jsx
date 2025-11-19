@@ -16,19 +16,8 @@ import {
 function ItemCard(item) {
   const dispatch = useDispatch();
   const { id, name, oldPrice, price, rating, image } = item;
-  // const [itemNum, setItemNum] = useState(
-  //   useSelector((state) => selectItemQuantity(state, id)) || 0
-  // );
+  
 
-  // const handleAddToCart = () => {
-  //   dispatch(addToCart(item));
-  //   setItemNum(useSelector((state) => selectItemQuantity(state, id)) || 0);
-  // };
-
-  // const handleDecreaseFromCart = () => {
-  //   dispatch(decreaseQuantityby1(id));
-  //   setItemNum(useSelector((state) => selectItemQuantity(state, id)) || 0);
-  // };
   const itemNum = useSelector((state) => selectItemQuantity(state, id)) || 0;
 
   const handleAddToCart = () => {
@@ -47,12 +36,12 @@ function ItemCard(item) {
           className="relative mx-2 mt-2 flex h-50 sm:h-60 rounded-xl"
           to={`/item/${id}`}
           state={{
+            id ,
             name,
             oldPrice,
             price,
             rating,
             image,
-            itemincart: itemNum,
           }}
         >
           <img
@@ -85,7 +74,6 @@ function ItemCard(item) {
 
           <AddToCartBtn
             itemNum={itemNum}
-            // setItemNum={setItemNum}
             handleAddToCart={handleAddToCart}
             handleDecreaseFromCart={handleDecreaseFromCart}
           />

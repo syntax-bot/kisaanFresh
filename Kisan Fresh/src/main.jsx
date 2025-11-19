@@ -15,13 +15,14 @@ import ItemPage from "./components/itempage/ItemPage.jsx";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./store/store.js";
-
+import CartPage from "./components/cart/Cart.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
       <Route path="" element={<App />} />
       <Route path="/item/:id" element={<ItemPage />} />
+      <Route path="/cart" element={<CartPage />} />
     </Route>
   )
 );

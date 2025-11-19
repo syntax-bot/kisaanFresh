@@ -31,7 +31,7 @@ function App() {
           image="https://images.pexels.com/photos/1093038/pexels-photo-1093038.jpeg"
         />
         <ItemCard
-          id="3"
+          id={3}
           name="banana"
           oldPrice="50"
           price="30"

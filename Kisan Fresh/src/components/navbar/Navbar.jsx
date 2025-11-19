@@ -3,6 +3,10 @@ import kisanFreshLogo from "../../assets/kisanfreshlogo-removebg.png";
 import CartSvg from "../../assets/CartSvg";
 import userImage from "../../assets/UserImage.jsx";
 import UserImage from "../../assets/UserImage.jsx";
+import { Link } from "react-router";
+import Search from "../search/Search.jsx";
+
+
 function Navbar() {
   const isUserLoggedIn = true; // This should be replaced with actual authentication logic
   useEffect(() => {
@@ -10,25 +14,30 @@ function Navbar() {
   }, [isUserLoggedIn]);
   return (
     <nav>
-      <div className="bg-surface p-2 mx-3 sm:mx-5 flex  justify-between items-center">
-        <div className="logo">
-          <img className="h-14" src={kisanFreshLogo} alt="Kisan Fresh Logo" />
+      
+      <div className="bg-surface p-2 sm:mx-5 flex  justify-between items-center">
+        <Link to={`/`}>
+          <div className="logo ">
+            <img className="h-14" src={kisanFreshLogo} alt="Kisan Fresh Logo" />
+          </div>
+        </Link>
+
+        <div className="">
+          <Search />
         </div>
         <div className="user">
           {isUserLoggedIn ? (
             <div className="flex">
-              <button className="cart mx-1 text-primary px-2 py-1 rounded-3xl  ">
-                <CartSvg />
-              </button>
-              <button
-                // type="button"
-                class="profile mx-1 text-primary px-2 py-1 rounded-3xl  "
-              >
-                <UserImage />
-              </button>
-              {/* <button className="profile text-primary px-2 py-1 rounded-3xl  ">
-                Profile
-              </button> */}
+              <Link to={`/cart`}>
+                <button className="cart mx-1 text-primary px-2 py-1 rounded-3xl  ">
+                  <CartSvg />
+                </button>
+              </Link>
+              <Link to={`/profile`}>
+                <button class="profile mx-1 text-primary px-2 py-1 rounded-3xl  ">
+                  <UserImage />
+                </button>
+              </Link>
             </div>
           ) : (
             <div className="flex">
