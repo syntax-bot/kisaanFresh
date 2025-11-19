@@ -1,20 +1,56 @@
-import React from "react";
+import React, { use } from "react";
 
 import AddToCartBtn from "../misc/AddToCartBtn";
 import ItemCard from "../ItemCard";
 import Rating from "../misc/Rating";
 import Thumbnail from "./Thumbnail";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
-
+import {
+  addToCart,
+  selectItemQuantity,
+  decreaseQuantityby1,
+} from "../../feature/cartSlice.js";
 function ItemPage() {
+  const dispatch = useDispatch();
   const location = useLocation();
-  const { name, oldPrice, newPrice, rating, image , itemincart } = location.state || {};
-  const [itemNum, setItemNum] = React.useState(itemincart || 0);
+  const { id, name, oldPrice, price, rating, image } = location.state || {};
+  const itemNum = useSelector((state) => selectItemQuantity(state, id)) || 0;
+
+  const handleAddToCart = () => {
+    dispatch(addToCart({ id, name, oldPrice, price, rating, image }));
+  };
+
+  const handleDecreaseFromCart = () => {
+    dispatch(decreaseQuantityby1(id));
+  };
+  const discount = ((oldPrice - price) / oldPrice) * 100;
 
   return (
     <>
       <main class="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* <button
+          className=""
+          onClick={async () => {
+            const data = {
+              mobile: "1234567890",
+              email: "testuser@example.com",
+            };
+            try {
+              const res = await axios.post(
+                "http://127.0.0.1:8000/register_buyer/",
+                data
+              );
+              console.log("✅ Manga created successfully!", res.data);
+            } catch (err) {
+              console.error(err);
+            }
+          }}
+        >
+          click me
+        </button> */}
         <section class="lg:col-span-7 bg-white rounded shadow p-4">
           <div class="grid grid-cols-1 md:grid-cols-5 gap-2">
             <div class="hidden md:flex md:flex-col items-center mt-1 gap-2 col-span-1">
@@ -72,12 +108,14 @@ function ItemPage() {
         <aside class="lg:col-span-5">
           <div class="sticky top-6 space-y-4">
             <div class="bg-white rounded shadow p-5">
-              <h1 class="text-2xl font-semibold mt-2">{"item name"}</h1>
+              <h1 class="text-2xl font-semibold mt-2">{name}</h1>
               <div class="mt-2 flex items-center gap-4">
-                <div class="text-3xl font-extrabold">{"₹4,999"}</div>
-                <div class="text-sm line-through text-gray-500">{"₹7,999"}</div>
+                <div class="text-3xl font-extrabold">₹{price}</div>
+                <div class="text-sm line-through text-gray-500">
+                  ₹{oldPrice}
+                </div>
                 <div class="text-sm text-green-600 font-medium">
-                  {"38% off"}
+                  {discount > 0 ? `${Math.round(discount)}% off` : ""}
                 </div>
               </div>
 
@@ -90,7 +128,11 @@ function ItemPage() {
               </label>
 
               <div class="mt-5 grid grid-cols-2 gap-3">
-                <AddToCartBtn itemNum={itemNum} setItemNum={setItemNum} />
+                <AddToCartBtn
+                  itemNum={itemNum}
+                  handleAddToCart={handleAddToCart}
+                  handleDecreaseFromCart={handleDecreaseFromCart}
+                />
                 <button
                   id="buyNow"
                   class="col-span-1 px-4 py-3 bg-indigo-600 text-white rounded font-semibold hover:bg-indigo-700"
@@ -106,30 +148,34 @@ function ItemPage() {
           <h3 class="font-semibold">Customers also bought</h3>
           <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             <ItemCard
+              id={"1"}
               name="banana"
               oldPrice="50"
-              newPrice="30"
+              price="30"
               rating={4}
               image="https://images.pexels.com/photos/1093038/pexels-photo-1093038.jpeg"
             />
             <ItemCard
+              id={"2"}
               name="banana"
               oldPrice="50"
-              newPrice="30"
+              price="30"
               rating={4}
               image="https://images.pexels.com/photos/1093038/pexels-photo-1093038.jpeg"
             />
             <ItemCard
+              id={"3"}
               name="banana"
               oldPrice="50"
-              newPrice="30"
-              rating={4}
+              price="300"
+              rating={4.5}
               image="https://images.pexels.com/photos/1093038/pexels-photo-1093038.jpeg"
             />
             <ItemCard
+              id={"4"}
               name="banana"
               oldPrice="50"
-              newPrice="30"
+              price="30"
               rating={4}
               image="https://images.pexels.com/photos/1093038/pexels-photo-1093038.jpeg"
             />
