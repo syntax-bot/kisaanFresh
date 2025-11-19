@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import kisanFreshLogo from "../../assets/kisanfreshlogo-removebg.png";
 import CartSvg from "../../assets/CartSvg";
+import userImage from "../../assets/UserImage.jsx";
+import UserImage from "../../assets/UserImage.jsx";
 function Navbar() {
   const isUserLoggedIn = true; // This should be replaced with actual authentication logic
   useEffect(() => {
     console.log("User logged in status:", isUserLoggedIn);
-
   }, [isUserLoggedIn]);
   return (
     <nav>
@@ -16,12 +17,18 @@ function Navbar() {
         <div className="user">
           {isUserLoggedIn ? (
             <div className="flex">
-              <button className="cart text-primary px-2 py-1 rounded-3xl  ">
+              <button className="cart mx-1 text-primary px-2 py-1 rounded-3xl  ">
                 <CartSvg />
               </button>
-              <button className="profile text-primary px-2 py-1 rounded-3xl  ">
-                Profile
+              <button
+                // type="button"
+                class="profile mx-1 text-primary px-2 py-1 rounded-3xl  "
+              >
+                <UserImage />
               </button>
+              {/* <button className="profile text-primary px-2 py-1 rounded-3xl  ">
+                Profile
+              </button> */}
             </div>
           ) : (
             <div className="flex">
