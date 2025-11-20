@@ -213,7 +213,7 @@ export default function RegistrationPage() {
             <p className="mt-4 text-center text-sm text-muted">
               Already have an account?{" "}
               <Link
-                to="/login"
+                to="/customer/login"
                 className="font-medium text-primary hover:text-accent"
               >
                 Login
@@ -266,7 +266,7 @@ export default function RegistrationPage() {
             <p className="mt-4 text-center text-sm text-muted">
               Already have an account?{" "}
               <Link
-                to="/signin"
+                to="/customer/login"
                 className="font-medium text-primary hover:text-accent"
               >
                 Login

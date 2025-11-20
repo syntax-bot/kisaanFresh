@@ -52,7 +52,7 @@ export default function LoginPage() {
       const form = new FormData();
       form.append("email", deatails.email);
       const res = await axios.post(
-        "http://127.0.0.1:8000/request_otp_buyer/",
+        "http://127.0.0.1:8000/request_otp_seller/",
         form
       );
       console.log(res.data);
@@ -80,7 +80,7 @@ export default function LoginPage() {
       const form = new FormData();
       form.append("email", deatails.email);
       form.append("email_otp", otp);
-      const res = await axios.post("http://127.0.0.1:8000/buyer_login/", form);
+      const res = await axios.post("http://127.0.0.1:8000/seller_login/", form);
       otpIsValid = true;
     } catch (err) {
       if (err.response) {
@@ -97,7 +97,7 @@ export default function LoginPage() {
 
     if (otpIsValid) {
       alert("OTP verified!");
-      navigate("/");
+      navigate("/home");
     } else {
       setError("Invalid OTP. Try again.");
     }
@@ -171,7 +171,7 @@ export default function LoginPage() {
             <p className="mt-4 text-center text-sm text-muted">
               Don't have an account?{" "}
               <Link
-                to="/register"
+                to="/customer/register"
                 className="font-medium text-primary hover:text-accent"
               >
                 Create one
@@ -223,7 +223,7 @@ export default function LoginPage() {
             <p className="mt-4 text-center text-sm text-muted">
               Don't have an account?{" "}
               <Link
-                to="/register"
+                to="/customer/register"
                 className="font-medium text-primary hover:text-accent"
               >
                 Create one
