@@ -55,7 +55,8 @@ export default function LoginPage() {
       form.append("email", deatails.email);
       const res = await axios.post(
         "http://127.0.0.1:8000/request_otp_buyer/",
-        form
+        form,
+        { withCredentials: true }
       );
       console.log(res.data);
       startTimer();
@@ -89,6 +90,7 @@ export default function LoginPage() {
       console.log(res);
       otpIsValid = !res.data.error;
       data = res.data;
+
     } catch (err) {
       if (err.response) {
         setError(err.response.data?.error || "Server error occurred");
@@ -99,7 +101,7 @@ export default function LoginPage() {
       }
     }
 
-    // reset OTP field
+
     setOtp("");
 
     if (otpIsValid) {
