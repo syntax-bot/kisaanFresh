@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { data, Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
-
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { login, logout } from "../../../feature/userSlice.js";
 export default function LoginPage() {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const [step, setStep] = useState(1);
 
   const [deatails, setDeatails] = useState({
@@ -74,14 +76,19 @@ export default function LoginPage() {
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    let otpIsValid = false;
-
+    let otpIsValid;
+    let data;
     try {
       const form = new FormData();
       form.append("email", deatails.email);
-      form.append("email_otp", otp);
-      const res = await axios.post("http://127.0.0.1:8000/buyer_login/", form);
-      otpIsValid = true;
+      form.append("otp", otp);
+      console.log(form.get("email"), form.get("otp"));
+      const res = await axios.post("http://127.0.0.1:8000/buyer_login/", form, {
+        withCredentials: true,
+      });
+      console.log(res);
+      otpIsValid = !res.data.error;
+      data = res.data;
     } catch (err) {
       if (err.response) {
         setError(err.response.data?.error || "Server error occurred");
@@ -96,18 +103,22 @@ export default function LoginPage() {
     setOtp("");
 
     if (otpIsValid) {
-      alert("OTP verified!");
+      toast("OTP verified! Login successful.");
+      console.log(data);
+      dispatch(login(data));
       navigate("/home");
     } else {
       setError("Invalid OTP. Try again.");
     }
   };
 
-
-  const inputBase ="relative block w-full appearance-none border px-3 py-3 text-text placeholder-muted focus:z-10 focus:outline-none sm:text-sm rounded-md";
-  const validClass ="border-green-500 focus:border-green-500 focus:ring-green-500";
+  const inputBase =
+    "relative block w-full appearance-none border px-3 py-3 text-text placeholder-muted focus:z-10 focus:outline-none sm:text-sm rounded-md";
+  const validClass =
+    "border-green-500 focus:border-green-500 focus:ring-green-500";
   const invalidClass = "border-red-500 focus:border-red-500 focus:ring-red-500";
-  const neutralClass ="border-gray-300 focus:border-primary focus:ring-primary";
+  const neutralClass =
+    "border-gray-300 focus:border-primary focus:ring-primary";
 
   return (
     <div className="flex items-center justify-center bg-background font-inter min-h-screen p-6">
@@ -116,7 +127,7 @@ export default function LoginPage() {
         {step === 1 && (
           <div>
             <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-text">
-             Sign in to your account
+              Sign in to your account
             </h2>
 
             <form className="mt-8 space-y-6" onSubmit={handleDetailsSubmit}>

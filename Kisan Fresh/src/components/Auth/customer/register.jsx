@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
  import { ToastContainer, toast } from 'react-toastify';
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import {login, logout} from "../../feature/userSlice.js";
+import {login, logout} from "../../../feature/userSlice.js";
 
 export default function RegistrationPage() {
   const navigate = useNavigate();
@@ -106,7 +106,7 @@ export default function RegistrationPage() {
     if (otpIsValid) {
       toast("OTP verified! Registration complete.");
       console.log(data);
-      dispatch(login({role: data.role , user_id: data.user_id}));
+      // dispatch(login({role: data.role , user_id: data.user_id}));
       navigate("/");
     } else {
       setError("Invalid OTP. Try again.");

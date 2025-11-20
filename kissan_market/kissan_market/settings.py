@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,10 +40,12 @@ INSTALLED_APPS = [
     'registration_login_system',
     'seller',
     'buyer',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
-     "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # 👈 must be at top (after SecurityMiddleware if you use it)
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -135,4 +136,17 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'testdjango127@gmail.com'         # Your Gmail address
 EMAIL_HOST_PASSWORD = 'ylzu neak vlsi djvo'      # The app password from Step 1
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+SESSION_COOKIE_SAMESITE = None
+SESSION_COOKIE_SECURE = False
+
+CSRF_COOKIE_SAMESITE = None
+CSRF_COOKIE_SECURE = False
+
+CORS_EXPOSE_HEADERS = ["Set-Cookie"]
