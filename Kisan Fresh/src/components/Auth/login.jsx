@@ -8,13 +8,13 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { login, logout } from "../../feature/userSlice.js";
 
-export default function LoginPage() {
+export default function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [step, setStep] = useState(1);
 
   const [deatails, setDeatails] = useState({
-    phoneNumber: "",
     email: "",
   });
 
@@ -84,31 +84,30 @@ export default function LoginPage() {
     try {
       const form = new FormData();
       form.append("email", deatails.email);
-      form.append("email_otp", otp);
-      const res = await axios.post("http://127.0.0.1:8000/buyer_login/", form);
-      console.log(res);
-      otpIsValid = !res.data.error;
+      form.append("otp", otp);
+      const res = await axios.post("http://127.0.0.1:8000/buyer_login/",form);
+      console.log(res) ;
+      otpIsValid = !res.data.error; 
       data = res.data;
     } catch (err) {
       if (err.response) {
         setError(err.response.data?.error || "Server error occurred");
       } else if (err.request) {
-        setError("No response from server");
+        setError("No response from server.");
       } else {
         setError(err.message);
       }
     }
 
-    // reset OTP field
     setOtp("");
 
     if (otpIsValid) {
       toast("OTP verified! Registration complete.");
       console.log(data);
-      dispatch(login({ role: data.role, user_id: data.user_id }));
+      dispatch(login({role: data.role , user_id: data.user_id}));
       navigate("/");
     } else {
-      setError("Invalid OTP. Try again.");
+      setError(data.error);
     }
   };
 

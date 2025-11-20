@@ -6,7 +6,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import {login, logout} from "../../feature/userSlice.js";
 
-export default function RegistrationPage() {
+export default function Register() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
