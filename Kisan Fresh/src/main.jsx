@@ -16,18 +16,26 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./store/store.js";
 import CartPage from "./components/cart/Cart.jsx";
-import RegistrationPage from "./components/Auth/register.jsx";
-import LoginPage from "./components/Auth/login.jsx";
+import CustomerRegister from "./components/Auth/customer/register.jsx";
+import CustomerLogin from "./components/Auth/customer/login.jsx";
+import SellerRegister from "./components/Auth/seller/register.jsx";
+import SellerLogin from "./components/Auth/seller/login.jsx";
+import SellerProfile from "./components/seller/sellerProfile.jsx";
+import Landing from "./components/Landing/Landing.jsx";
 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
-      <Route path="" element={<App />} />
+      <Route path="/" element={<Landing/>} />
+      <Route path="/home" element={<App />} />
       <Route path="/item/:id" element={<ItemPage />} />
       <Route path="/cart" element={<CartPage />} />
-      <Route path="/register" element={<RegistrationPage />} />
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/customer/register" element={<CustomerRegister/>} />
+      <Route path="/customer/login" element={<CustomerLogin/>} />
+      <Route path="/seller/register" element={<SellerRegister/>} />
+      <Route path="/seller/login" element={<SellerLogin/>} />
+      <Route path="/sellerprofile" element={<SellerProfile/>}/>
     </Route>
   )
 );

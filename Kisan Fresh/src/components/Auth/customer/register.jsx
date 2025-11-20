@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
-export default function LoginPage() {
+export default function RegistrationPage() {
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
@@ -20,10 +20,12 @@ export default function LoginPage() {
 
   // regex validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^[0-9]{10}$/;
 
+  const phoneIsValid = phoneRegex.test(deatails.phoneNumber);
   const emailIsValid = emailRegex.test(deatails.email);
 
-  const canContinue = emailIsValid;
+  const canContinue = phoneIsValid && emailIsValid;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -51,8 +53,9 @@ export default function LoginPage() {
     try {
       const form = new FormData();
       form.append("email", deatails.email);
+      form.append("mobile", deatails.phoneNumber);
       const res = await axios.post(
-        "http://127.0.0.1:8000/request_otp_buyer/",
+        "http://127.0.0.1:8000/register_buyer/",
         form
       );
       console.log(res.data);
@@ -80,7 +83,7 @@ export default function LoginPage() {
       const form = new FormData();
       form.append("email", deatails.email);
       form.append("email_otp", otp);
-      const res = await axios.post("http://127.0.0.1:8000/buyer_login/", form);
+      const res = await axios.post("http://127.0.0.1:8000/verify_buyer/", form);
       otpIsValid = true;
     } catch (err) {
       if (err.response) {
@@ -96,16 +99,15 @@ export default function LoginPage() {
     setOtp("");
 
     if (otpIsValid) {
-      alert("OTP verified!");
-      navigate("/");
+      alert("OTP verified! Registration complete.redirecting to SignIN page.");
+      navigate("/home");
     } else {
       setError("Invalid OTP. Try again.");
     }
   };
 
-
-  const inputBase ="relative block w-full appearance-none border px-3 py-3 text-text placeholder-muted focus:z-10 focus:outline-none sm:text-sm rounded-md";
-  const validClass ="border-green-500 focus:border-green-500 focus:ring-green-500";
+  const inputBase = "relative block w-full appearance-none border px-3 py-3 text-text placeholder-muted focus:z-10 focus:outline-none sm:text-sm rounded-md";
+  const validClass = "border-green-500 focus:border-green-500 focus:ring-green-500";
   const invalidClass = "border-red-500 focus:border-red-500 focus:ring-red-500";
   const neutralClass ="border-gray-300 focus:border-primary focus:ring-primary";
 
@@ -116,10 +118,43 @@ export default function LoginPage() {
         {step === 1 && (
           <div>
             <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-text">
-             Sign in to your account
+              Create a new account
             </h2>
 
             <form className="mt-8 space-y-6" onSubmit={handleDetailsSubmit}>
+              <div className="mb-3">
+                <input
+                  name="phoneNumber"
+                  type="tel"
+                  inputMode="numeric"
+                  placeholder="Phone Number (10 digits)"
+                  value={deatails.phoneNumber}
+                  onChange={handleInputChange}
+                  className={`${inputBase} ${
+                    deatails.phoneNumber === ""
+                      ? neutralClass
+                      : phoneIsValid
+                      ? validClass
+                      : invalidClass
+                  } rounded-md`}
+                />
+
+                <p
+                  className={`mt-1 text-sm ${
+                    phoneIsValid
+                      ? "text-green-600"
+                      : deatails.phoneNumber
+                      ? "text-red-600"
+                      : "text-muted"
+                  }`}
+                >
+                  {phoneIsValid
+                    ? ""
+                    : deatails.phoneNumber
+                    ? "Phone must be exactly 10 digits."
+                    : "Enter your 10-digit phone number."}
+                </p>
+              </div>
               <div>
                 <input
                   name="email"
@@ -169,12 +204,12 @@ export default function LoginPage() {
             </form>
 
             <p className="mt-4 text-center text-sm text-muted">
-              Don't have an account?{" "}
+              Already have an account?{" "}
               <Link
-                to="/register"
+                to="/customer/login"
                 className="font-medium text-primary hover:text-accent"
               >
-                Create one
+                Login
               </Link>
             </p>
           </div>
@@ -184,8 +219,9 @@ export default function LoginPage() {
         {step === 2 && (
           <div>
             <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-text">
-              Authentication
+              Verify your account
             </h2>
+
             <p className="mt-2 text-center text-sm text-muted">
               We've sent a 6-digit code to {deatails.email}
             </p>
@@ -206,7 +242,7 @@ export default function LoginPage() {
                 type="submit"
                 className="w-full px-4 py-3 bg-primary text-white rounded-md text-sm font-medium hover:brightness-95"
               >
-                Verify
+                Verify & Register
               </button>
             </form>
 
@@ -221,12 +257,12 @@ export default function LoginPage() {
               </button>
             </p>
             <p className="mt-4 text-center text-sm text-muted">
-              Don't have an account?{" "}
+              Already have an account?{" "}
               <Link
-                to="/register"
+                to="/customer/login"
                 className="font-medium text-primary hover:text-accent"
               >
-                Create one
+                Login
               </Link>
             </p>
           </div>
