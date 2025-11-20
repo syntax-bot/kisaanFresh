@@ -23,19 +23,26 @@ import SellerProfile from "./components/seller/sellerProfile.jsx";
 import Landing from "./components/Landing/Landing.jsx";
 import Add_veggies from "./components/Seller/Add_veggies.jsx";
 
-
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
-      <Route path="/" element={<Landing/>} />
+      <Route path="/" element={<Landing />} />
       <Route path="/home" element={<App />} />
       <Route path="/item/:id" element={<ItemPage />} />
-      <Route path="/cart" element={<CartPage />} />
-      <Route path="/customer/register" element={<CustomerRegister/>} />
-      <Route path="/customer/login" element={<CustomerLogin/>} />
-      <Route path="/seller/register" element={<SellerRegister/>} />
-      <Route path="/seller/login" element={<SellerLogin/>} />
-      <Route path="/sellerprofile" element={<SellerProfile/>}/>
+
+      <Route path="/customer">
+        <Route path="/register" element={<CustomerRegister />} />
+        <Route path="/login" element={<CustomerLogin />} />
+        <Route path="/cart" element={<CartPage />} />
+        {/* buyers profile */}
+      </Route>
+
+      <Route path="/seller">
+        <Route path="/register" element={<SellerRegister />} />
+        <Route path="/login" element={<SellerLogin />} />
+        <Route path="/profile" element={<SellerProfile />} />
+        <Route path="/add_veggies" element={<Add_veggies />} />
+      </Route>
     </Route>
   )
 );

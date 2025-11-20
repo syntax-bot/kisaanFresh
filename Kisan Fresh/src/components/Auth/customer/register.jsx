@@ -87,6 +87,7 @@ export default function RegistrationPage() {
       const form = new FormData();
       form.append("email", deatails.email);
       form.append("email_otp", otp);
+      console.log(form.get("email_otp") , form.get("email"));
       const res = await axios.post("http://127.0.0.1:8000/verify_buyer/", form);
       console.log(res) ;
       otpIsValid = !res.data.error; 

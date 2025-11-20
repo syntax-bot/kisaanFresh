@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function RegistrationPage() {
   const navigate = useNavigate();
@@ -78,18 +79,20 @@ export default function RegistrationPage() {
     e.preventDefault();
     setError("");
     let otpIsValid = false;
-
+    let data = null;
     try {
       const form = new FormData();
       form.append("email", deatails.email);
       form.append("email_otp", otp);
       const res = await axios.post("http://127.0.0.1:8000/verify_seller/", form);
-      otpIsValid = true;
+      otpIsValid = !res.data.error  ;
+      console.log(res) ;
+      data = res.data;
     } catch (err) {
       if (err.response) {
         setError(err.response.data?.error || "Server error occurred");
       } else if (err.request) {
-        setError("No response from server. Check server is running.");
+        setError("No response from server.");
       } else {
         setError(err.message);
       }
@@ -99,8 +102,8 @@ export default function RegistrationPage() {
     setOtp("");
 
     if (otpIsValid) {
-      alert("OTP verified! Registration complete.redirecting to SignIN page.");
-      navigate("/seller");
+      toast("OTP verified! Registration complete.");
+      navigate("/seller/login");
     } else {
       setError("Invalid OTP. Try again.");
     }
