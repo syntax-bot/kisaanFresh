@@ -52,7 +52,7 @@ export default function LoginPage() {
       const form = new FormData();
       form.append("email", deatails.email);
       const res = await axios.post(
-        "http://127.0.0.1:8000/request_otp_seller/",
+        "http://localhost:8000/request_otp_seller/",
         form
       );
       console.log(res.data);
@@ -80,7 +80,7 @@ export default function LoginPage() {
       const form = new FormData();
       form.append("email", deatails.email);
       form.append("email_otp", otp);
-      const res = await axios.post("http://127.0.0.1:8000/seller_login/", form);
+      const res = await axios.post("http://localhost:8000/seller_login/", form);
       otpIsValid = true;
     } catch (err) {
       if (err.response) {

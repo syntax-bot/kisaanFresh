@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
  import { ToastContainer, toast } from 'react-toastify';
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import {login, logout} from "../../feature/userSlice.js";
-
+import {login, logout} from "../../../feature/userSlice.js"
 export default function RegistrationPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -58,7 +57,7 @@ export default function RegistrationPage() {
       form.append("email", deatails.email);
       form.append("mobile", deatails.phoneNumber);
       const res = await axios.post(
-        "http://127.0.0.1:8000/register_buyer/",
+        "http://localhost:8000/register_buyer/",
         form
       );
       console.log(res.data);
@@ -87,7 +86,7 @@ export default function RegistrationPage() {
       const form = new FormData();
       form.append("email", deatails.email);
       form.append("email_otp", otp);
-      const res = await axios.post("http://127.0.0.1:8000/verify_buyer/", form);
+      const res = await axios.post("http://localhost:8000/verify_buyer/", form);
       console.log(res) ;
       otpIsValid = !res.data.error; 
       data = res.data;

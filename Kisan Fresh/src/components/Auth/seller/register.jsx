@@ -55,7 +55,7 @@ export default function RegistrationPage() {
       form.append("email", deatails.email);
       form.append("mobile", deatails.phoneNumber);
       const res = await axios.post(
-        "http://127.0.0.1:8000/register_seller/",
+        "http://localhost:8000/register_seller/",
         form
       );
       console.log(res.data);
@@ -83,7 +83,7 @@ export default function RegistrationPage() {
       const form = new FormData();
       form.append("email", deatails.email);
       form.append("email_otp", otp);
-      const res = await axios.post("http://127.0.0.1:8000/verify_seller/", form);
+      const res = await axios.post("http://localhost:8000/verify_seller/", form);
       otpIsValid = true;
     } catch (err) {
       if (err.response) {

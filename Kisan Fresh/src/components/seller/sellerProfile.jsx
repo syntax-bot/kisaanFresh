@@ -6,8 +6,8 @@ export default function SellerProfile() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [profile, setProfile] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [profile, setProfile] = useState(null); //data from server
+  const [isEditing, setIsEditing] = useState(false); //for toggleing edit and view
 
   const [seller_profile, setseller_profile] = useState({
     name: "",
@@ -19,11 +19,42 @@ export default function SellerProfile() {
 
   // get request for profile
   const getProfile = async () => {
-    // TODO: implement GET /seller_profile_view/ call
-    // - setLoading(true) before the call
-    // - on success: setProfile(...) and setseller_profile(...) with values
-    // - if 404: setProfile(null); setIsEditing(true)
-    // - setLoading(false) at the end
+    setLoading(true);
+    setError("");
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/seller_profile_view/`,
+        axiosCfg()
+      );
+
+      // Success: Set the profile data
+      if (res.data && res.data.profile) {
+        const data = res.data.profile;
+        setProfile(data);
+
+        // Pre-fill the form state in case user wants to edit immediately
+        setseller_profile({
+          name: data.name || "",
+          upi_id: data.upi_id || "",
+          address: data.address || "",
+          latitude: data.latitude || "",
+          longitude: data.longitude || "",
+        });
+        setIsEditing(false);
+      }
+    } catch (err) {
+      // Handle 404: Profile doesn't exist -> Go to Create Mode
+      if (err.response && err.response.status === 404) {
+        setProfile(null);
+        setIsEditing(true);
+      } else {
+        // Handle other errors (500, Network, etc)
+        const msg = err.response?.data?.error || "Failed to load profile";
+        setError(msg);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Basic validation: return null if valid or error string
