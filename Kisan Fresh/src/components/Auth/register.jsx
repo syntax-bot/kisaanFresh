@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
+import { ToastContainer, toast } from 'react-toastify';
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import {login, logout} from "../../feature/userSlice.js";
 
 export default function RegistrationPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [step, setStep] = useState(1);
 
@@ -78,29 +81,33 @@ export default function RegistrationPage() {
     e.preventDefault();
     setError("");
     let otpIsValid = false;
+    let data = null;
 
     try {
       const form = new FormData();
       form.append("email", deatails.email);
       form.append("email_otp", otp);
       const res = await axios.post("http://127.0.0.1:8000/verify_buyer/", form);
-      otpIsValid = true;
+      console.log(res) ;
+      otpIsValid = !res.data.error; 
+      data = res.data;
     } catch (err) {
       if (err.response) {
         setError(err.response.data?.error || "Server error occurred");
       } else if (err.request) {
-        setError("No response from server. Check server is running.");
+        setError("No response from server.");
       } else {
         setError(err.message);
       }
     }
 
-    // reset OTP field
     setOtp("");
 
     if (otpIsValid) {
-      alert("OTP verified! Registration complete.redirecting to SignIN page.");
-      navigate("/login");
+      toast("OTP verified! Registration complete.");
+      console.log(data);
+      dispatch(login({role: data.role , user_id: data.user_id}));
+      navigate("/");
     } else {
       setError("Invalid OTP. Try again.");
     }
