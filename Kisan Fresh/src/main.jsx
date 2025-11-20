@@ -36,7 +36,6 @@ const router = createBrowserRouter(
       <Route path="/seller/register" element={<SellerRegister/>} />
       <Route path="/seller/login" element={<SellerLogin/>} />
       <Route path="/sellerprofile" element={<SellerProfile/>}/>
-      <Route path="/profile" element={<Add_veggies />} />
     </Route>
   )
 );

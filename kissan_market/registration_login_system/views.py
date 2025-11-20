@@ -60,7 +60,7 @@ def verify_otp(request):
         if not email or not email_otp_entered:
             return JsonResponse({"error": "Email and OTP are required."})
 
-        #  Determine role from URL
+        # 🔹 Determine role from URL
         path = request.path.lower()
         if "seller" in path:
             role = "seller"
@@ -69,24 +69,25 @@ def verify_otp(request):
         else:
             return JsonResponse({"error": "Invalid verification route."})
 
-        #  Fetch latest OTP
+        # 🔹 Fetch latest OTP
         otp_obj = OTP.objects.filter(email=email).order_by('-created_at').first()
         if not otp_obj or not otp_obj.is_valid():
             return JsonResponse({"error": "OTP expired or not found. Please request again."})
 
-        #  Validate OTP
+        # 🔹 Validate OTP
         if otp_obj.otp == email_otp_entered:
             try:
                 # Get user with correct role
                 user = User.objects.get(email=email, role=role)
                 user.is_verified = True
                 user.save()
-
+                login(request,user)
                 return JsonResponse({
                     "message": f"{role.capitalize()} verified successfully!",
                     "user_id": user.id,
                     "role": user.role
                 })
+            
             except User.DoesNotExist:
                 return JsonResponse({"error": f"No {role} found with this email."})
         else:
@@ -97,6 +98,7 @@ def verify_otp(request):
 @csrf_exempt
 def request_otp(request):
     if request.method == "POST":
+        print(request.POST.get("email"))
         email = request.POST.get("email")
 
         if not email:
@@ -363,7 +365,6 @@ def seller_profile_view(request):
     # ------------------------------
     # POST — Create seller profile
     # ------------------------------
-    
     elif request.method == "POST":
         name = request.POST.get("name")
         upi_id = request.POST.get("upi_id")
