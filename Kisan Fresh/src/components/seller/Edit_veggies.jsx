@@ -1,0 +1,181 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
+const EditVegetable = () => {
+  const { id } = useParams(); 
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    variety: "",
+    price: "",
+    unit: "kg",
+    stock: "",
+    description: "",
+    freshness_level: "Fresh",
+    is_available: true,
+  });
+
+  const [loading, setLoading] = useState(true);
+
+  // Fetch existing vegetable
+  const fetchVeg = async () => {
+    try {
+      const res = await axios.get(
+        `http://127.0.0.1:8000/get_seller_vegetables/`,
+        { withCredentials: true }
+      );
+
+      const veg = res.data.vegetables.find((v) => v.id === parseInt(id));
+      if (!veg) {
+        toast.error("Vegetable not found!");
+        navigate("/my-vegetables");
+        return;
+      }
+
+      setFormData(veg);
+    } catch (err) {
+      toast.error("Failed to load vegetable");
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchVeg();
+  }, []);
+
+  // Handle Change
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+    // Handle Submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(
+        `http://127.0.0.1:8000/seller/edit_vegetable/${id}/`,
+        formData,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      toast.success("Vegetable updated!");
+      navigate("/my-vegetables");
+    } catch (err) {
+      toast.error(
+        err.response?.data?.error || "Update failed. Try again!"
+      );
+    }
+  };
+
+  if (loading)
+    return (
+      <div className="text-center py-20 text-lg font-semibold">
+        Loading...
+      </div>
+    );
+
+  return (
+    <div className="max-w-lg mx-auto my-12 bg-white shadow-lg p-6 rounded-lg border">
+      <h2 className="text-2xl font-bold text-green-700 text-center mb-6">
+        Edit Vegetable
+      </h2>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder="Name *"
+          className="w-full p-2 border rounded"
+          required
+        />
+
+        <input
+          name="variety"
+          value={formData.variety}
+          onChange={handleChange}
+          placeholder="Variety"
+          className="w-full p-2 border rounded"
+        />
+
+        <input
+          type="number"
+          name="price"
+          value={formData.price}
+          onChange={handleChange}
+          placeholder="Price"
+          className="w-full p-2 border rounded"
+        />
+
+        <input
+          type="number"
+          name="stock"
+          value={formData.stock}
+          onChange={handleChange}
+          placeholder="Stock"
+          className="w-full p-2 border rounded"
+        />
+
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Description"
+          className="w-full p-2 border rounded"
+        ></textarea>
+
+        <select
+          name="unit"
+          value={formData.unit}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        >
+          <option value="kg">Kg</option>
+          <option value="gram">Gram</option>
+          <option value="dozen">Dozen</option>
+          <option value="piece">Piece</option>
+        </select>
+
+        <select
+          name="freshness_level"
+          value={formData.freshness_level}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        >
+          <option value="Fresh">Fresh</option>
+          <option value="Very Fresh">Very Fresh</option>
+          <option value="Medium Fresh">Medium Fresh</option>
+        </select>
+
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            name="is_available"
+            checked={formData.is_available}
+            onChange={handleChange}
+          />
+          Available for sale
+        </label>
+
+        <button
+          type="submit"
+          className="w-full py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded"
+        >
+          Save Changes
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default EditVegetable;
