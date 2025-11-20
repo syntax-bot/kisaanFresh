@@ -40,7 +40,7 @@ function ItemPage() {
             };
             try {
               const res = await axios.post(
-                "http://127.0.0.1:8000/register_buyer/",
+                "http://localhost:8000/register_buyer/",
                 data
               );
               console.log("✅ Manga created successfully!", res.data);

@@ -18,6 +18,10 @@ import storage from "redux-persist/lib/storage"; // localStorage
 const rootReducer = combineReducers({
   user: userReducer,
   cart: cartReducer,
+  // sellerveges: sellerVegetableReducer,
+  // sellerOrders: sellerOrderReducer,
+  // sellerProfile: sellerProfileReducer,
+
 });
 
 // Persist configuration

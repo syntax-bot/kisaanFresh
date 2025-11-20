@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ItemCard from "./components/ItemCard";
-import { useDispatch } from "react-redux";
-
-
+import axios from "axios";
 
 function App() {
-  const dispatch = useDispatch();
 
-  const handleAddToCart = (item) => {
-    dispatch(addToCart(item));
-  };
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const res = await axios.get("http://localhost:8000/buyer/vegetables/nearby/");
+      console.log(res) ; 
+      setItems(res.data.data);
+    })();
+  }, []);
 
   return (
     <>
