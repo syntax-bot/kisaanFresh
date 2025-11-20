@@ -16,28 +16,28 @@ function AddToCartBtn({ itemNum ,handleAddToCart , handleDecreaseFromCart}) {
           </div>
         </div>
       ) : (
-        <button
-          type="button"
+        <div
+          
           className="flex w-full justify-between items-center rounded-md bg-primary px-5 py-2.5 text-center text-sm font-medium text-surface"
         >
-          <button
-            type="button"
+          <div
+            
             className="minus"
             onClick={() => handleDecreaseFromCart()}
           >
             <MinusSvg />
-          </button>
+          </div>
 
           <div className="count text-sm select-none">{itemNum}</div>
 
-          <button
-            type="button"
+          <div
+            
             className="plus "
             onClick={() => handleAddToCart()}
           >
             <PlusSvg />
-          </button>
-        </button>
+          </div>
+        </div>
       )}
     </>
   );
