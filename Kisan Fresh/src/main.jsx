@@ -21,7 +21,7 @@ import SellerRegister from "./components/Auth/seller/register.jsx";
 import SellerLogin from "./components/Auth/seller/login.jsx";
 import SellerProfile from "./components/seller/sellerProfile.jsx";
 import Landing from "./components/Landing/Landing.jsx";
-import Add_veggies from "./components/Seller/Add_veggies.jsx";
+import Add_veggies from "./components/seller/Add_veggies.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
