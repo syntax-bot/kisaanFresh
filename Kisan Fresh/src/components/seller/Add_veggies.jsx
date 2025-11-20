@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 function Add_veggies() {
   const [formData, setFormData] = useState({
     name: "",
@@ -18,9 +18,9 @@ function Add_veggies() {
   // Handle Input Change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({ 
-      ...formData, 
-      [name]: type === "checkbox" ? checked : value 
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -32,7 +32,7 @@ function Add_veggies() {
   // Submit Form
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
       data.append(key, value);
@@ -41,15 +41,13 @@ function Add_veggies() {
 
     try {
       const res = await axios.post(
-        "http://localhost:8000/your/api/url/here/", 
+        "http://127.0.0.1:8000/seller/add_vegetable/",
         data,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            // Include token if using JWT
-            Authorization: `Bearer ${localStorage.getItem("token")}`,  
           },
-          withCredentials: true, // If using session auth
+          withCredentials: true, 
         }
       );
       setMessage(`✔️ ${res.data.message}`);
@@ -60,7 +58,9 @@ function Add_veggies() {
 
   return (
     <div className="max-w-lg mx-auto my-12 p-6 bg-white shadow-lg rounded-lg border">
-      <h2 className="text-2xl font-bold mb-6 text-center text-green-700">Add Vegetable</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center text-green-700">
+        Add Vegetable
+      </h2>
 
       {message && (
         <p className="text-center mb-4 font-semibold text-blue-600">
@@ -69,7 +69,6 @@ function Add_veggies() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        
         {/* Name */}
         <input
           type="text"
@@ -145,8 +144,6 @@ function Add_veggies() {
           <option value="Medium Fresh">Medium Fresh</option>
         </select>
 
-       
-
         {/* Image Upload */}
         <input
           type="file"
@@ -168,4 +165,4 @@ function Add_veggies() {
   );
 }
 
-export default Add_veggies
+export default Add_veggies;

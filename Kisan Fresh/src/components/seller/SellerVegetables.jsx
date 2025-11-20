@@ -15,6 +15,7 @@ const SellerVegetables = () => {
         "http://127.0.0.1:8000/seller/my_vegetables/",
         { withCredentials: true } // Important for sending session cookie
       );
+      console.log(res)
       setVegetables(res.data.vegetables || []);
     } catch (err) {
       if (err.response) {
