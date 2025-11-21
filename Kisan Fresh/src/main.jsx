@@ -22,6 +22,7 @@ import SellerLogin from "./components/Auth/seller/login.jsx";
 import SellerProfile from "./components/seller/sellerProfile.jsx";
 import Landing from "./components/Landing/Landing.jsx";
 import Add_veggies from "./components/seller/Add_veggies.jsx";
+import CustomerProfile from "./components/customer/customerProfile.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -34,7 +35,7 @@ const router = createBrowserRouter(
         <Route path="register" element={<CustomerRegister />} />
         <Route path="login" element={<CustomerLogin />} />
         <Route path="cart" element={<CartPage />} />
-        {/* buyers profile */}
+        <Route path="profile" element={<CustomerProfile />} />
       </Route>
 
       <Route path="/seller">
