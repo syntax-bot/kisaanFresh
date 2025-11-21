@@ -31,26 +31,7 @@ function ItemPage() {
   return (
     <>
       <main class="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* <button
-          className=""
-          onClick={async () => {
-            const data = {
-              mobile: "1234567890",
-              email: "testuser@example.com",
-            };
-            try {
-              const res = await axios.post(
-                "http://localhost:8000/register_buyer/",
-                data
-              );
-              console.log("✅ Manga created successfully!", res.data);
-            } catch (err) {
-              console.error(err);
-            }
-          }}
-        >
-          click me
-        </button> */}
+        
         <section class="lg:col-span-7 bg-white rounded shadow p-4">
           <div class="grid grid-cols-1 md:grid-cols-5 gap-2">
             <div class="hidden md:flex md:flex-col items-center mt-1 gap-2 col-span-1">
@@ -72,7 +53,7 @@ function ItemPage() {
               <div class="relative aspect-w-4 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center">
                 <img
                   id="mainImage"
-                  src="https://images.pexels.com/photos/1093038/pexels-photo-1093038.jpeg"
+                  src={image}
                   alt="Product image"
                   class="object-contain max-h-120 md:max-h-120 w-auto"
                 />
@@ -81,6 +62,7 @@ function ItemPage() {
                 </span>
               </div>
             </div>
+            
           </div>
 
           <hr class="my-6" />
@@ -127,18 +109,18 @@ function ItemPage() {
                 Unit - {"1 kg"}
               </label>
 
-              <div class="mt-5 grid grid-cols-2 gap-3">
+              <div class="mt-5 ">
                 <AddToCartBtn
                   itemNum={itemNum}
                   handleAddToCart={handleAddToCart}
                   handleDecreaseFromCart={handleDecreaseFromCart}
                 />
-                <button
+                {/* <button
                   id="buyNow"
                   class="col-span-1 px-4 py-3 bg-indigo-600 text-white rounded font-semibold hover:bg-indigo-700"
                 >
                   Buy Now
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

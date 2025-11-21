@@ -28,12 +28,12 @@ function Navbar() {
         <div className="user">
           {isUserLoggedIn ? (
             <div className="flex">
-              <Link to={`/cart`}>
+              <Link to={`/customer/cart`}>
                 <button className="cart mx-1 text-primary px-2 py-1 rounded-3xl  ">
                   <CartSvg />
                 </button>
               </Link>
-              <Link to={`/profile`}>
+              <Link to={`/customer/profile`}>
                 <button class="profile mx-1 text-primary px-2 py-1 rounded-3xl  ">
                   <UserImage />
                 </button>
