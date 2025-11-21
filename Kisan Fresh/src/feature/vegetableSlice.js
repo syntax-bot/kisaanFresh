@@ -13,7 +13,7 @@ const sellerVegetableReducer = createSlice({
       state.userInfo = action.payload;
       state.isAuthenticated = true;
     },
-    
+
   },
 });
 

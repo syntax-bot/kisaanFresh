@@ -27,6 +27,8 @@ import SellerVegetables from "./components/seller/SellerVegetables.jsx";
 import EditVegetable from "./components/seller/Edit_veggies.jsx";
 import PrivateRoute from "./components/misc/PrivateRoute.jsx";
 import PublicRoute from "./components/misc/PublicRoute.jsx";
+import CompletedPurchases from "./components/buyer/CompletedPurchases.jsx";
+import PendingPurchases from "./components/buyer/PendingPurchases.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -50,6 +52,8 @@ const router = createBrowserRouter(
         <Route path="/customer">
           <Route path="cart" element={<CartPage />} />
           <Route path="profile" element={<CustomerProfile />} />
+          <Route path="completed_purchases" element={<CompletedPurchases />} />
+          <Route path="pending_purchases" element={<PendingPurchases />} />
         </Route>
 
         <Route path="/seller">

@@ -204,7 +204,7 @@ def cancel_order(request, purchase_id):
     #  Restore stock quantities for all vegetables in this purchase
     for item in purchase.items.all():
         vegetable = item.vegetable
-        vegetable.stock_quantity += item.quantity  # restore quantity
+        vegetable.stock += item.quantity  # restore quantity
         vegetable.save()
 
     #  Mark order as cancelled

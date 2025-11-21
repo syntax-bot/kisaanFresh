@@ -9,16 +9,17 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
- 
   "dependencies": {
     "@reduxjs/toolkit": "^2.10.1",
     "@tailwindcss/vite": "^4.1.14",
     "axios": "^1.13.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-loader-spinner": "^8.0.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.5",
     "react-toastify": "^11.0.5",
+    "reactjs-popup": "^2.0.6",
     "redux-persist": "^6.0.0",
     "tailwindcss": "^4.1.14"
   },
