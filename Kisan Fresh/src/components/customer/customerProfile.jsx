@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function SellerProfile() {
+export default function CustomerProfile() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -9,7 +9,7 @@ export default function SellerProfile() {
   const [profile, setProfile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  const [seller_profile, setseller_profile] = useState({
+  const [customer_profile, setcustomer_profile] = useState({
     name: "",
     upi_id: "",
     address: "",
@@ -23,13 +23,13 @@ export default function SellerProfile() {
     setError("");
     setSuccess("");
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/seller_profile/`, {
+      const res = await axios.get(`http://127.0.0.1:8000/buyer_profile/`, {
         withCredentials: true,
       });
       console.log(res.data.profile);
       const data = res.data.profile;
       setProfile(data);
-      setseller_profile({
+      setcustomer_profile({
         name: data.name || "",
         upi_id: data.upi_id || "",
         address: data.address || "",
@@ -52,17 +52,17 @@ export default function SellerProfile() {
   };
 
   const validate = () => {
-    if (!seller_profile.upi_id.trim()) return "UPI ID is required";
-    if (!seller_profile.address.trim()) return "address is required";
-    if (!seller_profile.name.trim()) return "name is required";
+    if (!customer_profile.upi_id.trim()) return "UPI ID is required";
+    if (!customer_profile.address.trim()) return "address is required";
+    if (!customer_profile.name.trim()) return "name is required";
     if (
-      !seller_profile.latitude.trim() ||
-      isNaN(Number(seller_profile.latitude))
+      !customer_profile.latitude.trim() ||
+      isNaN(Number(customer_profile.latitude))
     )
       return "Valid latitude is required";
     if (
-      !seller_profile.longitude.trim() ||
-      isNaN(Number(seller_profile.longitude))
+      !customer_profile.longitude.trim() ||
+      isNaN(Number(customer_profile.longitude))
     )
       return "Valid longitude is required";
     return null;
@@ -70,7 +70,7 @@ export default function SellerProfile() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setseller_profile((prev) => ({ ...prev, [name]: value }));
+    setcustomer_profile((prev) => ({ ...prev, [name]: value }));
   };
 
   const createProfile = async (e) => {
@@ -86,14 +86,14 @@ export default function SellerProfile() {
     setSubmitting(true);
     try {
       const profile = new FormData();
-      profile.append("name", seller_profile.name);
-      profile.append("upi_id", seller_profile.upi_id);
-      profile.append("address", seller_profile.address);
-      profile.append("latitude", seller_profile.latitude);
-      profile.append("longitude", seller_profile.longitude);
+      profile.append("name", customer_profile.name);
+      profile.append("upi_id", customer_profile.upi_id);
+      profile.append("address", customer_profile.address);
+      profile.append("latitude", customer_profile.latitude);
+      profile.append("longitude", customer_profile.longitude);
 
       const res = await axios.post(
-        `http://127.0.0.1:8000/seller_profile/`,
+        `http://127.0.0.1:8000/buyer_profile/`,
         profile,
         {
           withCredentials: true,
@@ -105,11 +105,11 @@ export default function SellerProfile() {
       // update profile locally
       setProfile((p) => ({
         ...(p || {}),
-        name: seller_profile.name,
-        upi_id: seller_profile.upi_id,
-        address: seller_profile.address,
-        latitude: seller_profile.latitude,
-        longitude: seller_profile.longitude,
+        name: customer_profile.name,
+        upi_id: customer_profile.upi_id,
+        address: customer_profile.address,
+        latitude: customer_profile.latitude,
+        longitude: customer_profile.longitude,
       }));
 
       setIsEditing(false);
@@ -140,14 +140,14 @@ export default function SellerProfile() {
 
     try {
       const profile = new FormData();
-      profile.append("name", seller_profile.name);
-      profile.append("upi_id", seller_profile.upi_id);
-      profile.append("address", seller_profile.address);
-      profile.append("latitude", seller_profile.latitude);
-      profile.append("longitude", seller_profile.longitude);
+      profile.append("name", customer_profile.name);
+      profile.append("upi_id", customer_profile.upi_id);
+      profile.append("address", customer_profile.address);
+      profile.append("latitude", customer_profile.latitude);
+      profile.append("longitude", customer_profile.longitude);
 
-      const res = await axios.post(
-        `http://127.0.0.1:8000/seller_profile/`,
+      const res = await axios.put(
+        `http://127.0.0.1:8000/buyer_profile/`,
         profile,
         {
           withCredentials: true,
@@ -159,11 +159,11 @@ export default function SellerProfile() {
       // update profile locally
       setProfile((p) => ({
         ...(p || {}),
-        name: seller_profile.name,
-        upi_id: seller_profile.upi_id,
-        address: seller_profile.address,
-        latitude: seller_profile.latitude,
-        longitude: seller_profile.longitude,
+        name: customer_profile.name,
+        upi_id: customer_profile.upi_id,
+        address: customer_profile.address,
+        latitude: customer_profile.latitude,
+        longitude: customer_profile.longitude,
       }));
     } catch (err) {
       if (err.response) {
@@ -178,7 +178,6 @@ export default function SellerProfile() {
       await getProfile();
     }
   };
-
   useEffect(() => {
     getProfile();
   }, []);
@@ -191,7 +190,7 @@ export default function SellerProfile() {
     <div className="flex items-center justify-center p-6">
       <div className="w-full max-w-2xl rounded-lg bg-surface p-6 shadow-md">
         <h2 className="text-2xl font-semibold mb-4 text-text">
-          Seller Profile
+          Customer Profile
         </h2>
 
         {loading ? (
@@ -252,7 +251,7 @@ export default function SellerProfile() {
                     onClick={() => {
                       setSuccess("");
                       setError("");
-                      setseller_profile({
+                      setcustomer_profile({
                         name: profile.name,
                         upi_id: profile.upi_id,
                         address: profile.address,
@@ -276,7 +275,7 @@ export default function SellerProfile() {
                   <label className={labelClass}>Name</label>
                   <input
                     name="name"
-                    value={seller_profile.name}
+                    value={customer_profile.name}
                     onChange={handleChange}
                     className={`${inputBase} border-gray-300`}
                     placeholder="Full name or shop name"
@@ -287,7 +286,7 @@ export default function SellerProfile() {
                   <label className={labelClass}>UPI ID</label>
                   <input
                     name="upi_id"
-                    value={seller_profile.upi_id}
+                    value={customer_profile.upi_id}
                     onChange={handleChange}
                     className={`${inputBase} border-gray-300`}
                     placeholder="example@bank"
@@ -298,7 +297,7 @@ export default function SellerProfile() {
                   <label className={labelClass}>Address</label>
                   <textarea
                     name="address"
-                    value={seller_profile.address}
+                    value={customer_profile.address}
                     onChange={handleChange}
                     className={`${inputBase} border-gray-300 min-h-[80px]`}
                     placeholder="Shop address / locality"
@@ -310,7 +309,7 @@ export default function SellerProfile() {
                     <label className={labelClass}>Latitude</label>
                     <input
                       name="latitude"
-                      value={seller_profile.latitude}
+                      value={customer_profile.latitude}
                       onChange={handleChange}
                       className={`${inputBase} border-gray-300`}
                       placeholder="e.g. 28.7041"
@@ -320,7 +319,7 @@ export default function SellerProfile() {
                     <label className={labelClass}>Longitude</label>
                     <input
                       name="longitude"
-                      value={seller_profile.longitude}
+                      value={customer_profile.longitude}
                       onChange={handleChange}
                       className={`${inputBase} border-gray-300`}
                       placeholder="e.g. 77.1025"
@@ -355,7 +354,7 @@ export default function SellerProfile() {
                         setIsEditing(false);
                         setError("");
                         setSuccess("");
-                        setseller_profile({
+                        setcustomer_profile({
                           name: profile.name || "",
                           upi_id: profile.upi_id || "",
                           address: profile.address || "",

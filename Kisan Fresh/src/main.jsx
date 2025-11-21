@@ -22,6 +22,7 @@ import SellerLogin from "./components/Auth/seller/login.jsx";
 import SellerProfile from "./components/seller/sellerProfile.jsx";
 import Landing from "./components/Landing/Landing.jsx";
 import Add_veggies from "./components/seller/Add_veggies.jsx";
+import CustomerProfile from "./components/customer/customerProfile.jsx";
 import SellerVegetables from "./components/seller/SellerVegetables.jsx";
 import EditVegetable from "./components/seller/Edit_veggies.jsx";
 import PrivateRoute from "./components/misc/PrivateRoute.jsx";
@@ -30,6 +31,7 @@ import PublicRoute from "./components/misc/PublicRoute.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
+
       <Route element={<PublicRoute />}>
         <Route path="/" element={<Landing />} />
         <Route path="/customer">
@@ -47,6 +49,7 @@ const router = createBrowserRouter(
         <Route path="/item/:id" element={<ItemPage />} />
         <Route path="/customer">
           <Route path="cart" element={<CartPage />} />
+          <Route path="profile" element={<CustomerProfile />} />
         </Route>
 
         <Route path="/seller">
