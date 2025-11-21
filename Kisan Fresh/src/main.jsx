@@ -23,26 +23,41 @@ import SellerProfile from "./components/seller/sellerProfile.jsx";
 import Landing from "./components/Landing/Landing.jsx";
 import Add_veggies from "./components/seller/Add_veggies.jsx";
 import CustomerProfile from "./components/customer/customerProfile.jsx";
+import SellerVegetables from "./components/seller/SellerVegetables.jsx";
+import EditVegetable from "./components/seller/Edit_veggies.jsx";
+import PrivateRoute from "./components/misc/PrivateRoute.jsx";
+import PublicRoute from "./components/misc/PublicRoute.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
-      <Route path="/" element={<Landing />} />
-      <Route path="/home" element={<App />} />
-      <Route path="/item/:id" element={<ItemPage />} />
 
-      <Route path="/customer">
-        <Route path="register" element={<CustomerRegister />} />
-        <Route path="login" element={<CustomerLogin />} />
-        <Route path="cart" element={<CartPage />} />
-        <Route path="profile" element={<CustomerProfile />} />
+      <Route element={<PublicRoute />}>
+        <Route path="/" element={<Landing />} />
+        <Route path="/customer">
+          <Route path="register" element={<CustomerRegister />} />
+          <Route path="login" element={<CustomerLogin />} />
+        </Route>
+        <Route path="/seller">
+          <Route path="register" element={<SellerRegister />} />
+          <Route path="login" element={<SellerLogin />} />
+        </Route>
       </Route>
 
-      <Route path="/seller">
-        <Route path="register" element={<SellerRegister />} />
-        <Route path="login" element={<SellerLogin />} />
-        <Route path="profile" element={<SellerProfile />} />
-        <Route path="add_veggies" element={<Add_veggies />} />
+      <Route element={<PrivateRoute />}>
+        <Route path="/home" element={<App />} />
+        <Route path="/item/:id" element={<ItemPage />} />
+        <Route path="/customer">
+          <Route path="cart" element={<CartPage />} />
+          <Route path="profile" element={<CustomerProfile />} />
+        </Route>
+
+        <Route path="/seller">
+          <Route path="profile" element={<SellerProfile />} />
+          <Route path="add_veggies" element={<Add_veggies />} />
+          <Route path="my_vegetables" element={<SellerVegetables />} />
+          <Route path="edit_veggies/:id" element={<EditVegetable />} />
+        </Route>
       </Route>
     </Route>
   )
