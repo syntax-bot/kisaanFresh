@@ -9,14 +9,11 @@ const sellerVegetableReducer = createSlice({
   name: "user",
   initialState,
   reducers: {
-    login: (state, action) => {
+    add_veges_from_server: (state, action) => {
       state.userInfo = action.payload;
       state.isAuthenticated = true;
     },
-    logout: (state) => {
-      state.userInfo = null;
-      state.isAuthenticated = false;
-    },
+    
   },
 });
 
