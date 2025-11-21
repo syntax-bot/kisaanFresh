@@ -50,9 +50,9 @@ function Add_veggies() {
           withCredentials: true, 
         }
       );
-      setMessage(`✔️ ${res.data.message}`);
+      setMessage(` ${res.data.message}`);
     } catch (err) {
-      setMessage(`❌ ${err.response?.data?.error || "Something went wrong"}`);
+      setMessage(` ${err.response?.data?.error || "Something went wrong"}`);
     }
   };
 
