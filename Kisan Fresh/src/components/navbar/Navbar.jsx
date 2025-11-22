@@ -23,9 +23,10 @@ function Navbar() {
           </div>
         </Link>
 
-        <div className="">
-          <Search />
-        </div>
+        {
+          isUserLoggedIn && <Search />
+        }
+        
         <div className="user">
           {isUserLoggedIn ? (
             <div className="flex">

@@ -30,11 +30,13 @@ import PublicRoute from "./components/misc/PublicRoute.jsx";
 import CompletedPurchases from "./components/buyer/CompletedPurchases.jsx";
 import PendingPurchases from "./components/buyer/PendingPurchases.jsx";
 import BuyerDashboard from "./components/buyer/BuyerDashboard.jsx";
+import AddReview from "./components/buyer/AddReview.jsx";
+import BuyerAnalytics from "./components/buyer/Dashboard.jsx";
+    
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
-
       <Route element={<PublicRoute />}>
         <Route path="/" element={<Landing />} />
         <Route path="/customer">
@@ -56,6 +58,8 @@ const router = createBrowserRouter(
           <Route path="profile" element={<CustomerProfile />} />
           <Route path="completed_purchases" element={<CompletedPurchases />} />
           <Route path="pending_purchases" element={<PendingPurchases />} />
+          <Route path="review/:purchaseId/:itemId" element={<AddReview />} />
+          <Route path="analysis" element={<BuyerAnalytics />} />
         </Route>
 
         <Route path="/seller">
@@ -65,7 +69,14 @@ const router = createBrowserRouter(
           <Route path="edit_veggies/:id" element={<EditVegetable />} />
         </Route>
       </Route>
-      <Route path="*" element={<div>404 Not Found</div>} />
+      <Route
+        path="*"
+        element={
+          <div className="text-center py-20 text-red-500 font-semibold">
+            404 Page Not Found
+          </div>
+        }
+      />
     </Route>
   )
 );

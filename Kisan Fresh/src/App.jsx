@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
 import ItemCard from "./components/ItemCard";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function App() {
 
   const [items, setItems] = useState([]);
-
+  const navigate = useNavigate();
   useEffect(() => {
     (async () => {
       const res = await axios.get("http://127.0.0.1:8000/buyer/vegetables/nearby/" , {
         withCredentials: true,
       });
       if(res.data.error){
-        Navigate("/customer/profile");
+        navigate("/customer/profile");
       }
       setItems(res.data.vegetables);
       console.log(res.data.vegetables) ;
+
     })();
   }, []);
 
@@ -33,6 +35,7 @@ function App() {
               oldPrice={item.old_price}
               price={item.price}
               rating={item.rating}
+              description={item.description}
               image={"http://127.0.0.1:8000/media/" + item.image}
             />
           ))
