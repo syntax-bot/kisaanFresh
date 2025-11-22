@@ -190,7 +190,7 @@ def seller_orders(request):
 
 @csrf_exempt
 @login_required
-def accept_order(request):
+def accept_order(request,purchase_id):
     """Seller accepts a pending order (changes status to processing)."""
     if request.method == "POST":
         try:
@@ -232,7 +232,7 @@ def accept_order(request):
 
 @csrf_exempt
 @login_required
-def decline_order(request):
+def decline_order(request,purchase_id):
     """Seller declines a pending order (marks it as cancelled and restores stock)."""
     if request.method == "POST":
         try:
@@ -393,3 +393,107 @@ def get_transactions_seller(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
+
+@csrf_exempt
+@login_required
+def get_completed_purchases(request):
+    """
+    Return all completed purchases of the logged-in seller
+    including items, seller, and total price details.
+    """
+    seller = request.user  # current logged-in buyer
+    
+    # Fetch completed purchases
+    purchases = Purchase.objects.filter(seller=seller, status="Completed").prefetch_related("items__vegetable", "buyer")
+
+    purchase_list = []
+    for purchase in purchases:
+        items = [
+            {
+                "vegetable_name": item.vegetable.name,
+                "quantity": float(item.quantity),
+                "price_per_unit": float(item.price_per_unit),
+                "total_price": float(item.total_price)
+            }
+            for item in purchase.items.all()
+        ]
+
+        purchase_list.append({
+            "purchase_id": purchase.id,
+            "buyer_name": purchase.buyer.email,
+            "total_price": float(purchase.total_price),
+            "status": purchase.status,
+            "created_at": purchase.created_at.strftime("%Y-%m-%d %H:%M"),
+            "items": items
+        })
+
+    return JsonResponse({"completed_purchases": purchase_list}, safe=False)
+
+
+@csrf_exempt
+@login_required
+def get_pending_orders(request):
+    """
+    Returns all pending orders for the logged-in seller.
+    """
+    seller = request.user # logged-in buyer
+
+    pending_orders = Purchase.objects.filter(seller=seller, status="Pending").prefetch_related("items__vegetable", "seller")
+
+    order_list = []
+    for order in pending_orders:
+        items = [
+            {
+                "vegetable_name": item.vegetable.name,
+                "quantity": float(item.quantity),
+                "price_per_unit": float(item.price_per_unit),
+                "total_price": float(item.total_price),
+            }
+            for item in order.items.all()
+        ]
+
+        order_list.append({
+            "purchase_id": order.id,
+            "buyer_email": order.buyer.email,
+            "total_price": float(order.total_price),
+            "status": order.status,
+            "created_at": order.created_at.strftime("%Y-%m-%d %H:%M"),
+            "items": items,
+        })
+
+    return JsonResponse({"pending_orders": order_list}, safe=False)
+
+@csrf_exempt
+@login_required
+def get_processing_orders(request):
+    """
+    Returns all pending orders for the logged-in seller.
+    """
+    seller = request.user # logged-in buyer
+
+    processing_orders = Purchase.objects.filter(seller=seller, status="Processing").prefetch_related("items__vegetable", "seller")
+
+    order_list = []
+    for order in processing_orders:
+        items = [
+            {
+                "vegetable_name": item.vegetable.name,
+                "quantity": float(item.quantity),
+                "price_per_unit": float(item.price_per_unit),
+                "total_price": float(item.total_price),
+            }
+            for item in order.items.all()
+        ]
+
+        order_list.append({
+            "purchase_id": order.id,
+            "buyer_email": order.buyer.email,
+            "total_price": float(order.total_price),
+            "status": order.status,
+            "created_at": order.created_at.strftime("%Y-%m-%d %H:%M"),
+            "items": items,
+        })
+
+    return JsonResponse({"processing_orders": order_list}, safe=False)
