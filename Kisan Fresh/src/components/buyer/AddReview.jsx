@@ -3,10 +3,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../misc/Loader";
 
-const AddReview = ({ item, onClose, onSuccess }) => {
+const AddReview = () => {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(false);
+  const { item, purchase } =
+    location.state || {};
 
   const submitReview = async () => {
     if (!comment.trim()) {
@@ -27,8 +29,8 @@ const AddReview = ({ item, onClose, onSuccess }) => {
       );
 
       toast.success("Review submitted!");
-      onSuccess();
-      onClose();
+      // onSuccess();
+      // onClose();
     } catch (err) {
       toast.error(err.response?.data?.error || "Failed to submit review");
     }
@@ -39,7 +41,7 @@ const AddReview = ({ item, onClose, onSuccess }) => {
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
       <div className="bg-white rounded-lg shadow-lg p-6 w-96">
         <h2 className="text-lg font-bold text-green-700 text-center">
-          Review: {item.vegetable_name}
+          Review: {item}
         </h2>
 
         {/* Rating Stars */}
@@ -69,7 +71,7 @@ const AddReview = ({ item, onClose, onSuccess }) => {
         {/* Buttons */}
         <div className="mt-4 flex justify-end gap-3">
           <button
-            onClick={onClose}
+            // onClick={onClose}
             className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
           >
             Cancel

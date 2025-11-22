@@ -38,7 +38,7 @@ export default function CustomerProfile() {
       });
       setIsEditing(false);
     } catch (err) {
-      // Profile doesn't exist
+      
       if (err.response && err.response.status === 404) {
         setProfile(null);
       } else {

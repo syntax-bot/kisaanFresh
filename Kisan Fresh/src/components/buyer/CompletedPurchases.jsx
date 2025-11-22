@@ -1,23 +1,83 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import { LineWave } from "react-loader-spinner";
+import { Link } from "react-router";
 
 const CompletedPurchases = () => {
-  const [purchases, setPurchases] = useState([]);
+  const [showDialog, setShowDialog] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedPurchase, setSelectedPurchase] = useState(null);
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(0);
+  const [purchases, setPurchases] = useState([
+    {
+      purchase_id: 15,
+      seller_name: "Ramesh Kumar",
+      seller_email: "ramesh@example.com",
+      total_price: 180,
+      status: "Completed",
+      created_at: "2025-02-09 14:22",
+      items: [
+        {
+          item_id: 33,
+          vegetable_name: "Tomato",
+          quantity: 2.5,
+          price_per_unit: 40,
+          total_price: 100,
+        },
+        {
+          item_id: 34,
+          vegetable_name: "Potato",
+          quantity: 2,
+          price_per_unit: 40,
+          total_price: 80,
+        },
+      ],
+    },
+  ]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch completed purchases of buyer
+  const handleReviewSubmit = async (purchaseId, itemId, comment, rating) => {
+    if(rating === 0){
+      toast.error("Please provide a rating");
+      return;
+    }
+    if (!comment.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+
+    try {
+      await axios.post(
+        "http://localhost:8000/add_purchase_review/",
+        {
+          purchase_item_id: itemId,
+          comment,
+          rating,
+        },
+        { withCredentials: true }
+      );
+      toast.success("Review submitted!");
+      fetchCompletedPurchases(); // refresh list
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to submit review");
+    }
+  };
+
+
+
   const fetchCompletedPurchases = async () => {
     setLoading(true);
     try {
-        console.log("first")
+      console.log("first");
       const res = await axios.get(
         "http://127.0.0.1:8000/buyer/purchases/completed/",
         { withCredentials: true }
       );
       console.log(res.data);
-      setPurchases(res.data.completed_purchases || []);
+      // setPurchases(res.data.completed_purchases || []);
     } catch (err) {
       setError(err.response?.data?.error || "Failed to load purchases");
       toast.error("Login required or server error");
@@ -81,7 +141,15 @@ const CompletedPurchases = () => {
                     <span>
                       {item.vegetable_name} ({item.quantity} units)
                     </span>
-                    <span>₹{item.total_price}</span>
+                    <span>
+                      ₹{item.total_price}
+                      <button
+                        onClick={() => setShowDialog(true)}
+                        className="ml-4 px-2 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+                      >
+                        review
+                      </button>
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -105,6 +173,71 @@ const CompletedPurchases = () => {
             </div>
           </div>
         ))}
+        {showDialog && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+            <div className="bg-white w-96 p-6 rounded-lg shadow-lg">
+              {/* Title */}
+              <h3 className="text-xl font-bold text-green-600 text-center">
+                Rate & Review
+              </h3>
+
+              {/* Stars */}
+              <div className="flex justify-center mt-4">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span
+                    key={star}
+                    className={`cursor-pointer text-3xl ${
+                      rating >= star ? "text-yellow-500" : "text-gray-300"
+                    }`}
+                    onClick={() => setRating(star)}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+
+              {/* Comment Box */}
+              <textarea
+                className="w-full border border-gray-300 rounded p-2 mt-4 focus:ring focus:ring-green-300"
+                rows="3"
+                placeholder="Write your review..."
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              ></textarea>
+
+              {/* Buttons */}
+              <div className="mt-6 flex justify-end gap-2">
+                <button
+                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                  onClick={() => {
+                    setShowDialog(false);
+                    setSelectedItem(null);
+                    setSelectedPurchase(null);
+                    setComment("");
+                    setRating(0);
+                  }}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                  onClick={() => {
+                    handleReviewSubmit(
+                      selectedPurchase,
+                      selectedItem,
+                      comment,
+                      rating
+                    );
+                    setShowDialog(false);
+                  }}
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
