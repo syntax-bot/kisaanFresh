@@ -4,38 +4,41 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loader from "../misc/Loader";
 import { useDispatch } from "react-redux";
+import { logout } from "../../feature/userSlice";
 
 const BuyerDashboard = () => {
   // const [buyer, setBuyer] = useState(null);
   // const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  //   // Fetch logged-in buyer profile
+  //   const fetchProfile = async () => {
+  //     try {
+  //       const res = await axios.get("http://127.0.0.1:8000/buyer_profile/", {
+  //         withCredentials: true,
+  //       });
+  //       console.log(res);
+  //       setBuyer(res.data.profile);
+  //     } catch (err) {
+  //       toast.error("Please login first!");
+  //       navigate("/customer/login");
+  //     }
+  //     setLoading(false);
+  //   };
 
-//   // Fetch logged-in buyer profile
-//   const fetchProfile = async () => {
-//     try {
-//       const res = await axios.get("http://127.0.0.1:8000/buyer_profile/", {
-//         withCredentials: true,
-//       });
-//       console.log(res);
-//       setBuyer(res.data.profile);
-//     } catch (err) {
-//       toast.error("Please login first!");
-//       navigate("/customer/login");
-//     }
-//     setLoading(false);
-//   };
-
-//   useEffect(() => {
-//     fetchProfile();
-//   }, []);
+  //   useEffect(() => {
+  //     fetchProfile();
+  //   }, []);
 
   const handleLogout = async () => {
     try {
-      await axios.get("http://127.0.0.1:8000/buyer_logout/", {
+      const res = await axios.post("http://127.0.0.1:8000/buyer_logout/", {
         withCredentials: true,
       });
       toast.success("Logged out successfully");
+      console.log(res);
       dispatch(logout());
+      console.log("first")
       navigate("/customer/login");
     } catch (err) {
       toast.error("Logout failed!");
@@ -61,7 +64,6 @@ const BuyerDashboard = () => {
           <p className="text-gray-600">{buyer.email}</p>
         </div> */}
 
-        
         <div className="flex flex-col gap-4 mb-6">
           <button
             onClick={() => navigate("/customer/profile")}
@@ -90,16 +92,20 @@ const BuyerDashboard = () => {
           >
             Cart
           </button>
+          <button
+            onClick={() => navigate("/customer/analysis")}
+            className="py-3 w-full bg-sky-400 text-white rounded-lg hover:bg-sky-600"
+          >
+            Analysis
+          </button>
 
           <button
-            // onClick={handleLogout}
+            onClick={handleLogout}
             className="w-full  py-3 bg-red-400 text-white rounded-lg hover:bg-red-600"
           >
             Logout
           </button>
         </div>
-
-        {/* Logout */}
       </div>
     </div>
   );

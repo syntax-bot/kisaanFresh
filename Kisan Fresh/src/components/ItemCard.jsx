@@ -15,7 +15,7 @@ import {
 
 function ItemCard(item) {
   const dispatch = useDispatch();
-  const { id, name, oldPrice, price, rating, image } = item;
+  const { id, name, oldPrice, price, rating, image , description} = item;
   
 
   const itemNum = useSelector((state) => selectItemQuantity(state, id)) || 0;
@@ -42,6 +42,7 @@ function ItemCard(item) {
             price,
             rating,
             image,
+            description
           }}
         >
           <img
