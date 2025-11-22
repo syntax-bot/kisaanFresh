@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Loader from "../misc/Loader";
 
 const SellerVegetables = () => {
   const [vegetables, setVegetables] = useState([]);
@@ -34,7 +35,7 @@ const SellerVegetables = () => {
   if (loading) {
     return (
       <div className="flex justify-center py-20 text-lg font-semibold">
-        Loading Vegetables...
+        <Loader width={40} height={40} />
       </div>
     );
   }

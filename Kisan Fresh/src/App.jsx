@@ -11,7 +11,9 @@ function App() {
       const res = await axios.get("http://127.0.0.1:8000/buyer/vegetables/nearby/" , {
         withCredentials: true,
       });
-
+      if(res.data.error){
+        Navigate("/customer/profile");
+      }
       setItems(res.data.vegetables);
       console.log(res.data.vegetables) ;
     })();
