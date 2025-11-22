@@ -29,6 +29,7 @@ import PrivateRoute from "./components/misc/PrivateRoute.jsx";
 import PublicRoute from "./components/misc/PublicRoute.jsx";
 import CompletedPurchases from "./components/buyer/CompletedPurchases.jsx";
 import PendingPurchases from "./components/buyer/PendingPurchases.jsx";
+import BuyerDashboard from "./components/buyer/BuyerDashboard.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -51,6 +52,7 @@ const router = createBrowserRouter(
         <Route path="/item/:id" element={<ItemPage />} />
         <Route path="/customer">
           <Route path="cart" element={<CartPage />} />
+          <Route path="dashboard" element={<BuyerDashboard />} />
           <Route path="profile" element={<CustomerProfile />} />
           <Route path="completed_purchases" element={<CompletedPurchases />} />
           <Route path="pending_purchases" element={<PendingPurchases />} />
@@ -63,6 +65,7 @@ const router = createBrowserRouter(
           <Route path="edit_veggies/:id" element={<EditVegetable />} />
         </Route>
       </Route>
+      <Route path="*" element={<div>404 Not Found</div>} />
     </Route>
   )
 );
