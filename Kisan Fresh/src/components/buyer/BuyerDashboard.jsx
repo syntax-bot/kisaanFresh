@@ -36,9 +36,7 @@ const BuyerDashboard = () => {
         withCredentials: true,
       });
       toast.success("Logged out successfully");
-      console.log(res);
       dispatch(logout());
-      console.log("first")
       navigate("/customer/login");
     } catch (err) {
       toast.error("Logout failed!");

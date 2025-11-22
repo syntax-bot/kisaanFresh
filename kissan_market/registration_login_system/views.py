@@ -7,6 +7,8 @@ from django.contrib.auth import login, logout
 from django.utils import timezone
 from datetime import timedelta
 import json
+from django.contrib.auth.decorators import login_required
+
 # ----------------------
 # Step 1: Request OTP
 # ----------------------
@@ -170,6 +172,8 @@ def login_seller(request):
             return JsonResponse({"error": "Invalid or expired OTP."})
 
     return JsonResponse({"error": "Invalid request method."})
+
+@login_required
 @csrf_exempt
 def logout_seller(request):
     if request.method == "POST":
@@ -252,12 +256,17 @@ def login_buyer(request):
 @csrf_exempt
 def logout_buyer(request):
     if request.method == "POST":
-        logout(request)  # destroy session
-        return JsonResponse({"message": "Buyer logged out successfully!"})
-    
-    return JsonResponse({"error": "Invalid request method."})
+        logout(request)
+
+        response = JsonResponse({"message": "Buyer logged out successfully!"})
+        response.delete_cookie('sessionid')  # Explicit cookie remove
+
+        return response
+
+    return JsonResponse({"error": "Invalid request method."}, status=400)
 
 
+@login_required
 @csrf_exempt
 def buyer_profile_view(request):
     if not request.user.is_authenticated:
@@ -335,7 +344,7 @@ def buyer_profile_view(request):
 
     return JsonResponse({"error": "Invalid request method."}, status=405)
 
-
+@login_required
 @csrf_exempt
 def seller_profile_view(request):
     if not request.user.is_authenticated:

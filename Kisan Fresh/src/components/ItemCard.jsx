@@ -26,6 +26,7 @@ function ItemCard(item) {
 
   const handleDecreaseFromCart = () => {
     dispatch(decreaseQuantityby1(id));
+    console.log(description)
   };
   const discount = ((oldPrice - price) / oldPrice) * 100;
 
@@ -42,7 +43,7 @@ function ItemCard(item) {
             price,
             rating,
             image,
-            description
+            description,
           }}
         >
           <img

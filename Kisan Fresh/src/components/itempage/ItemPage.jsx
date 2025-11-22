@@ -16,16 +16,18 @@ import {
 function ItemPage() {
   const dispatch = useDispatch();
   const location = useLocation();
-  const { id, name, oldPrice, price, rating, image } = location.state || {};
+  const { id, name, oldPrice, price, rating, image  , description} = location.state || {};
   const itemNum = useSelector((state) => selectItemQuantity(state, id)) || 0;
 
   const handleAddToCart = () => {
-    dispatch(addToCart({ id, name, oldPrice, price, rating, image }));
+    dispatch(addToCart({ id, name, oldPrice, price }));
   };
 
   const handleDecreaseFromCart = () => {
+    console.log(description)
     dispatch(decreaseQuantityby1(id));
   };
+  
   const discount = ((oldPrice - price) / oldPrice) * 100;
 
   return (
@@ -33,55 +35,30 @@ function ItemPage() {
       <main class="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <section class="lg:col-span-7 bg-white rounded shadow p-4">
-          <div class="grid grid-cols-1 md:grid-cols-5 gap-2">
-            <div class="hidden md:flex md:flex-col items-center mt-1 gap-2 col-span-1">
-              <Thumbnail
-                src="https://images.pexels.com/photos/1093038/pexels-photo-1093038.jpeg"
-                alt="thumb2"
-              />
-              <Thumbnail
-                src="https://images.pexels.com/photos/1093038/pexels-photo-1093038.jpeg"
-                alt="thumb2"
-              />
-              <Thumbnail
-                src="https://images.pexels.com/photos/1093038/pexels-photo-1093038.jpeg"
-                alt="thumb2"
-              />
-            </div>
 
-            <div class="col-span-4">
+
               <div class="relative aspect-w-4 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center">
                 <img
                   id="mainImage"
                   src={image}
                   alt="Product image"
-                  class="object-contain max-h-120 md:max-h-120 w-auto"
+                  class="object-cover max-h-120 md:max-h-120 w-auto"
                 />
-                <span className="absolute bottom-0 right-0 m-2 rounded-full bg-secondary px-2 text-center text-sm font-medium text-surface">
+                <span className="absolute bottom-0 right-0  m-2 rounded-full bg-secondary px-2 text-center text-sm font-medium text-surface">
                   share
                 </span>
               </div>
-            </div>
             
-          </div>
 
           <hr class="my-6" />
 
           <div>
             <h3 class="text-lg font-semibold">Product details</h3>
             <p class="mt-2 text-sm text-gray-700 line-clamp-3">
-              This is a sample product description used to demonstrate a mock
-              Amazon item page. It includes feature bullet points, meta
-              information, and a longer description block to show how text wraps
-              around the page. Replace this area with your real product copy.
+              {description}
             </p>
 
-            <ul class="mt-3 list-disc pl-5 space-y-1 text-sm text-gray-700">
-              <li>High performance and durable build</li>
-              <li>Battery life: up to 20 hours</li>
-              <li>Includes carrying case and USB-C cable</li>
-              <li>1-year manufacturer warranty</li>
-            </ul>
+            
           </div>
 
           <hr class="my-6" />
