@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import Loader from "../misc/Loader";
 import { useDispatch } from "react-redux";
 import { logout } from "../../feature/userSlice";
+import { clearCart } from "../../feature/cartSlice";
 
 const BuyerDashboard = () => {
   // const [buyer, setBuyer] = useState(null);
@@ -37,6 +38,7 @@ const BuyerDashboard = () => {
       });
       toast.success("Logged out successfully");
       dispatch(logout());
+      dispatch(clearCart());
       navigate("/customer/login");
     } catch (err) {
       toast.error("Logout failed!");

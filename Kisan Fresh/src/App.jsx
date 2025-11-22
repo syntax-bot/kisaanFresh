@@ -16,7 +16,7 @@ function App() {
         navigate("/customer/profile");
       }
       setItems(res.data.vegetables);
-      console.log(res.data.vegetables[0].description) ;
+      console.log(res.data.vegetables) ;
 
     })();
   }, []);
