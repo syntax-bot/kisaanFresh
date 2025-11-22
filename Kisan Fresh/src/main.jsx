@@ -30,6 +30,11 @@ import PublicRoute from "./components/misc/PublicRoute.jsx";
 import CompletedPurchases from "./components/buyer/CompletedPurchases.jsx";
 import PendingPurchases from "./components/buyer/PendingPurchases.jsx";
 import BuyerDashboard from "./components/buyer/BuyerDashboard.jsx";
+import SellerDashboard from "./components/seller/SellerDashboard.jsx";
+import PendingPurchasesSeller from "./components/seller/PendingPurchases.jsx";
+import ProcessingPurchasesSeller from "./components/seller/ProcessingPurchases.jsx";
+import CompletedPurchaseSeller from "./components/seller/CompletedPurchases.jsx";
+import SellAnalytics from "./components/seller/SellAnalytics.jsx";
 import AddReview from "./components/buyer/AddReview.jsx";
 import BuyerAnalytics from "./components/buyer/Dashboard.jsx";
     
@@ -64,6 +69,11 @@ const router = createBrowserRouter(
 
         <Route path="/seller">
           <Route path="profile" element={<SellerProfile />} />
+          <Route path="dashboard" element={<SellerDashboard />} />
+          <Route path="pending_purchases" element={<PendingPurchasesSeller/>} />
+          <Route path="processing_purchases" element={<ProcessingPurchasesSeller/>} />
+          <Route path="completed_purchases" element={<CompletedPurchaseSeller/>} />
+          <Route path="sell_analytics" element={<SellAnalytics/>} />
           <Route path="add_veggies" element={<Add_veggies />} />
           <Route path="my_vegetables" element={<SellerVegetables />} />
           <Route path="edit_veggies/:id" element={<EditVegetable />} />
