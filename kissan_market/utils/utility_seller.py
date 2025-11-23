@@ -1,6 +1,6 @@
 from django.core.mail import send_mail
 from django.conf import settings
-
+from datetime import datetime
 
 def send_order_accepted_email(buyer_email, purchase_id):
     subject = "Order Accepted - Kissan Market"
