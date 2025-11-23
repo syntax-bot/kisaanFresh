@@ -13,6 +13,8 @@ urlpatterns = [
     path('purchases/completed/',get_completed_purchases, name='get_completed_purchases'),
     path('orders/pending/',get_pending_orders, name='get_pending_orders'),
     path('orders/processing/',get_processing_orders, name='get_processing_orders'),
+    path('get_msp/',get_msp,name='get_msp')
+    
 
 
 
