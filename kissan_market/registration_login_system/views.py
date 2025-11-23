@@ -34,10 +34,8 @@ def register_seller(request):
         )
 
         if not created:
-            # If already exists, update details
-            user.mobile = mobile
-            user.role = role
-            user.save()
+            return JsonResponse({"error":"User already exists with given email "})
+
 
         # Generate and store OTP
         email_otp = generate_otp()
@@ -202,9 +200,7 @@ def register_buyer(request):
         )
 
         if not created:
-            # Update existing user mobile if needed
-            buyer.mobile = mobile
-            buyer.save()
+            return JsonResponse({"error":"User already exists with given email "})
 
         # Generate OTP
         email_otp = generate_otp()
