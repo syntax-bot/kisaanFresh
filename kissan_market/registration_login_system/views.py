@@ -22,23 +22,24 @@ def register_seller(request):
             return JsonResponse({"error": "Email and mobile are required."})
 
         role = "seller"  # Fixed role for this endpoint
+        # Check if any user exists with same email or mobile
+        existing_email = User.objects.filter(email=email, role=role).first()
+        existing_mobile = User.objects.filter(mobile=mobile, role=role).first()
 
+        if existing_email and existing_mobile:
+            return JsonResponse({"error": "User already exists with this email and mobile number."}, status=409)
+
+        if existing_email:
+            return JsonResponse({"error": "User already exists with this email."}, status=409)
         # Check if user already exists with this email
-        user, created = User.objects.get_or_create(
+        current_user = User.objects.create(
             email=email,
-            defaults={
-                "mobile": mobile,
-                "username": email,
-                "role": role
-            }
+            mobile=mobile,
+            username=email,
+            role=role
         )
 
-        if not created:
-            # If already exists, update details
-            user.mobile = mobile
-            user.role = role
-            user.save()
-
+        
         # Generate and store OTP
         email_otp = generate_otp()
         OTP.objects.create(email=email, otp=email_otp)
@@ -190,22 +191,38 @@ def register_buyer(request):
 
         if not email or not mobile:
             return JsonResponse({"error": "Email and Mobile are required."})
+        # Check if any buyer exists with same email or mobile
+        existing_email = User.objects.filter(email=email, role="buyer").first()
+        existing_mobile = User.objects.filter(mobile=mobile, role="buyer").first()
 
-        # Check if user with role=buyer exists
-        buyer, created = User.objects.get_or_create(
+        if existing_email and existing_mobile:
+            return JsonResponse(
+                {"error": "Buyer already exists with this email and mobile number."},
+                status=409
+            )
+
+        if existing_email:
+            return JsonResponse(
+                {"error": "Buyer already exists with this email."},
+                status=409
+            )
+
+        if existing_mobile:
+            return JsonResponse(
+                {"error": "Buyer already exists with this mobile number."},
+                status=409
+            )
+
+        # Create new buyer
+        buyer = User.objects.create(
             email=email,
-            defaults={
-                'mobile': mobile,
-                'username': email,
-                'role': 'buyer'
-            }
+            mobile=mobile,
+            username=email,
+            role="buyer",
         )
 
-        if not created:
-            # Update existing user mobile if needed
-            buyer.mobile = mobile
-            buyer.save()
-
+        
+        
         # Generate OTP
         email_otp = generate_otp()
 
@@ -265,8 +282,7 @@ def logout_buyer(request):
 @login_required
 @csrf_exempt
 def buyer_profile_view(request):
-    if not request.user.is_authenticated:
-        return JsonResponse({"error": "Authentication required. Please log in first."}, status=401)
+    
     if request.user.role != "buyer":
         return JsonResponse({"error": "Access denied. Only buyers can access this page."}, status=403)
     # ------------------------------

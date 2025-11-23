@@ -24,6 +24,7 @@ urlpatterns = [
     path('',include('registration_login_system.urls')),
     path('seller/', include('seller.urls')),
     path('buyer/', include('buyer.urls')),
+    path('schema-viewer/', include('schema_viewer.urls')),
 
 ]
 

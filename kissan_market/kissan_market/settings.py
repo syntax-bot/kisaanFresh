@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'seller',
     'buyer',
     'corsheaders',
+    'schema_viewer'
 ]
 
 MIDDLEWARE = [
@@ -139,10 +140,10 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+
+
+CORS_ALLOW_ALL_ORIGINS = True
+
 SESSION_COOKIE_SAMESITE = None
 SESSION_COOKIE_SECURE = False
 
