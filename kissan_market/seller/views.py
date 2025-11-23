@@ -11,7 +11,9 @@ from utils.transaction_utility import add_transaction
 import os
 import pandas as pd
 from django.conf import settings
-
+import csv
+from pathlib import Path
+from utils.utility_seller import send_order_accepted_email,send_order_declined_email
 @csrf_exempt
 @login_required
 
@@ -226,7 +228,7 @@ def accept_order(request,purchase_id):
             return JsonResponse({"error": "Invalid JSON data."}, status=400)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
-
+    send_order_accepted_email(purchase.buyer.email,purchase.id)
     return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
@@ -295,6 +297,7 @@ def decline_order(request,purchase_id):
                 }
 
                 add_transaction(transaction_data)
+            send_order_declined_email(purchase.buyer.email,purchase.id)
             return JsonResponse({
                 "message": "Order declined successfully and stock restored.",
                 "purchase_id": purchase.id,
@@ -497,3 +500,13 @@ def get_processing_orders(request):
         })
 
     return JsonResponse({"processing_orders": order_list}, safe=False)
+
+
+def get_msp(request):
+    file_path = Path(settings.BASE_DIR) / "utils" / "Commodity-wise-MSP-Trend.csv"
+    df = pd.read_csv(file_path)
+    data = df[["Crop", "2025-26-MSP"]].to_dict(orient="records")
+    print(df.head())
+    return JsonResponse({"msp_data": data}, safe=False, status=200)
+
+

@@ -18,6 +18,7 @@ import os
 from django.conf import settings
 import csv
 import pandas as pd
+from utils.utility_buyer import send_buyer_cancel_email,send_buyer_order_email,send_seller_order_email
 @csrf_exempt
 @login_required
 def nearby_vegetables(request):
@@ -101,9 +102,10 @@ def buy_vegetables(request):
             # Reduce stock
             veg.stock -= qty
             veg.save()
+        send_seller_order_email(seller.email,purchase.id)
 
         purchase_ids.append(purchase.id)
-
+    send_buyer_order_email(request.user.email,purchase_ids)
     return JsonResponse({
         "message": "Purchase successful!",
         "purchase_ids": purchase_ids,
@@ -130,7 +132,8 @@ def get_completed_purchases(request):
                 "vegetable_name": item.vegetable.name,
                 "quantity": float(item.quantity),
                 "price_per_unit": float(item.price_per_unit),
-                "total_price": float(item.total_price)
+                "total_price": float(item.total_price),
+                "item_id":item.id
             }
             for item in purchase.items.all()
         ]
@@ -244,6 +247,7 @@ def cancel_order(request, purchase_id):
         }
 
         add_transaction(transaction_data)
+    send_buyer_cancel_email(request.user.email,purchase.id)
     return JsonResponse({
         "message": "Order cancelled successfully and stock restored!",
         "purchase_id": purchase.id,

@@ -253,18 +253,14 @@ def login_buyer(request):
 
     return JsonResponse({"error": "Invalid request method."})
 
+@login_required
 @csrf_exempt
 def logout_buyer(request):
     if request.method == "POST":
-        logout(request)
-
-        response = JsonResponse({"message": "Buyer logged out successfully!"})
-        response.delete_cookie('sessionid')  # Explicit cookie remove
-
-        return response
-
-    return JsonResponse({"error": "Invalid request method."}, status=400)
-
+        logout(request)  # destroy session
+        return JsonResponse({"message": "Buyer logged out successfully!"})
+    
+    return JsonResponse({"error": "Invalid request method."})
 
 @login_required
 @csrf_exempt
@@ -326,18 +322,20 @@ def buyer_profile_view(request):
     # PUT — Update buyer profile
     # ------------------------------
     elif request.method == "PUT":
-        import json
-        data = json.loads(request.body.decode("utf-8"))
-        profile = BuyerProfile.objects.filter(user=request.user).first()
+        from django.http import QueryDict
 
+        # Parse form-data from PUT body
+        put_data = QueryDict(request.body)
+
+        profile = BuyerProfile.objects.filter(user=request.user).first()
         if not profile:
             return JsonResponse({"error": "Profile not found."}, status=404)
 
-        profile.name = data.get("name", profile.name)
-        profile.upi_id = data.get("upi_id", profile.upi_id)
-        profile.address = data.get("address", profile.address)
-        profile.latitude = data.get("latitude", profile.latitude)
-        profile.longitude = data.get("longitude", profile.longitude)
+        profile.name = put_data.get("name", profile.name)
+        profile.upi_id = put_data.get("upi_id", profile.upi_id)
+        profile.address = put_data.get("address", profile.address)
+        profile.latitude = put_data.get("latitude", profile.latitude)
+        profile.longitude = put_data.get("longitude", profile.longitude)
         profile.save()
 
         return JsonResponse({"message": "Profile updated successfully!"})
@@ -404,19 +402,21 @@ def seller_profile_view(request):
     # PUT — Update seller profile
     # ------------------------------
     elif request.method == "PUT":
-        data = json.loads(request.body.decode("utf-8"))
-        profile = SellerProfile.objects.filter(user=request.user).first()
+        from django.http import QueryDict
 
+        # Parse form-data from PUT body
+        put_data = QueryDict(request.body)
+
+        profile = SellerProfile.objects.filter(user=request.user).first()
         if not profile:
             return JsonResponse({"error": "Profile not found."}, status=404)
 
-        profile.name = data.get("name", profile.name)
-        profile.upi_id = data.get("upi_id", profile.upi_id)
-        profile.address = data.get("address", profile.address)
-        profile.latitude = data.get("latitude", profile.latitude)
-        profile.longitude = data.get("longitude", profile.longitude)
+        profile.name = put_data.get("name", profile.name)
+        profile.upi_id = put_data.get("upi_id", profile.upi_id)
+        profile.address = put_data.get("address", profile.address)
+        profile.latitude = put_data.get("latitude", profile.latitude)
+        profile.longitude = put_data.get("longitude", profile.longitude)
         profile.save()
 
-        return JsonResponse({"message": "Seller profile updated successfully!"})
-
+        return JsonResponse({"message": "Profile updated successfully!"})
     return JsonResponse({"error": "Invalid request method."}, status=405)
