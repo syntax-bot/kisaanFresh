@@ -22,23 +22,24 @@ def register_seller(request):
             return JsonResponse({"error": "Email and mobile are required."})
 
         role = "seller"  # Fixed role for this endpoint
+        # Check if any user exists with same email or mobile
+        existing_email = User.objects.filter(email=email, role=role).first()
+        existing_mobile = User.objects.filter(mobile=mobile, role=role).first()
 
+        if existing_email and existing_mobile:
+            return JsonResponse({"error": "User already exists with this email and mobile number."}, status=409)
+
+        if existing_email:
+            return JsonResponse({"error": "User already exists with this email."}, status=409)
         # Check if user already exists with this email
-        user, created = User.objects.get_or_create(
+        current_user = User.objects.create(
             email=email,
-            defaults={
-                "mobile": mobile,
-                "username": email,
-                "role": role
-            }
+            mobile=mobile,
+            username=email,
+            role=role
         )
 
-        if not created:
-            # If already exists, update details
-            user.mobile = mobile
-            user.role = role
-            user.save()
-
+        
         # Generate and store OTP
         email_otp = generate_otp()
         OTP.objects.create(email=email, otp=email_otp)
@@ -149,27 +150,36 @@ def login_seller(request):
         if not email or not otp_entered:
             return JsonResponse({"error": "Email and OTP are required."})
 
-        # Check if seller exists and is verified
         try:
             seller = User.objects.get(email=email, is_verified=True, role="seller")
         except User.DoesNotExist:
             return JsonResponse({"error": "Seller not found or not verified."})
 
-        # Get latest OTP
         otp_obj = OTP.objects.filter(email=email).order_by('-created_at').first()
         if not otp_obj:
             return JsonResponse({"error": "No OTP found. Please request OTP first."})
 
-        # Validate OTP
         if otp_obj.otp == otp_entered and timezone.now() - otp_obj.created_at <= timedelta(minutes=5):
-            login(request, seller)  # create session
-            return JsonResponse({
+            login(request, seller)
+
+            response = JsonResponse({
+                "authenticated": True,
                 "message": "Seller login successful!",
                 "seller_id": seller.id,
-                "role": seller.role
+                "role": seller.role,
             })
-        else:
-            return JsonResponse({"error": "Invalid or expired OTP."})
+
+            response.set_cookie(
+                key="sessionid",
+                value=request.session.session_key,
+                httponly=True,
+                samesite="Lax",
+                secure=False,
+            )
+
+            return response
+        
+        return JsonResponse({"error": "Invalid or expired OTP."})
 
     return JsonResponse({"error": "Invalid request method."})
 
@@ -190,22 +200,38 @@ def register_buyer(request):
 
         if not email or not mobile:
             return JsonResponse({"error": "Email and Mobile are required."})
+        # Check if any buyer exists with same email or mobile
+        existing_email = User.objects.filter(email=email, role="buyer").first()
+        existing_mobile = User.objects.filter(mobile=mobile, role="buyer").first()
 
-        # Check if user with role=buyer exists
-        buyer, created = User.objects.get_or_create(
+        if existing_email and existing_mobile:
+            return JsonResponse(
+                {"error": "Buyer already exists with this email and mobile number."},
+                status=409
+            )
+
+        if existing_email:
+            return JsonResponse(
+                {"error": "Buyer already exists with this email."},
+                status=409
+            )
+
+        if existing_mobile:
+            return JsonResponse(
+                {"error": "Buyer already exists with this mobile number."},
+                status=409
+            )
+
+        # Create new buyer
+        buyer = User.objects.create(
             email=email,
-            defaults={
-                'mobile': mobile,
-                'username': email,
-                'role': 'buyer'
-            }
+            mobile=mobile,
+            username=email,
+            role="buyer",
         )
 
-        if not created:
-            # Update existing user mobile if needed
-            buyer.mobile = mobile
-            buyer.save()
-
+        
+        
         # Generate OTP
         email_otp = generate_otp()
 
@@ -265,8 +291,7 @@ def logout_buyer(request):
 @login_required
 @csrf_exempt
 def buyer_profile_view(request):
-    if not request.user.is_authenticated:
-        return JsonResponse({"error": "Authentication required. Please log in first."}, status=401)
+    
     if request.user.role != "buyer":
         return JsonResponse({"error": "Access denied. Only buyers can access this page."}, status=403)
     # ------------------------------
@@ -420,3 +445,18 @@ def seller_profile_view(request):
 
         return JsonResponse({"message": "Profile updated successfully!"})
     return JsonResponse({"error": "Invalid request method."}, status=405)
+
+
+def auth_status(request):
+    print(request.user.is_authenticated,request.user)
+    if(request.user.is_authenticated):
+        return JsonResponse({
+            "authenticated": True,
+            "user": {
+                "id": request.user.id,
+                "email": request.user.email,
+            }
+        })
+    return JsonResponse({
+        "error":"Not Authenticated"
+    })

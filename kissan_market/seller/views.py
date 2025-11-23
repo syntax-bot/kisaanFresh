@@ -121,7 +121,7 @@ def edit_vegetable(request, veg_id):
                 vegetable = Vegetable.objects.get(id=veg_id, seller=seller)
             except Vegetable.DoesNotExist:
                 return JsonResponse({'error': 'Vegetable not found or not owned by you'}, status=404)
-
+            
             data = json.loads(request.body)
 
             # Update only provided fields
