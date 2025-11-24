@@ -6,11 +6,13 @@ import axios from "axios";
 
 import { useDispatch } from "react-redux";
 import { login } from "../../../feature/userSlice.js";
+import Loader from "../../misc/Loader.jsx";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [step, setStep] = useState(1);
+  const [loading,setLoading] = useState(false);
 
   const [deatails, setDeatails] = useState({
     phoneNumber: "",
@@ -29,6 +31,7 @@ export default function LoginPage() {
   const canContinue = emailIsValid;
 
   const handleInputChange = (e) => {
+    setError("");
     const { name, value } = e.target;
     setDeatails((prev) => ({ ...prev, [name]: value }));
   };
@@ -50,6 +53,7 @@ export default function LoginPage() {
   const handleDetailsSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const form = new FormData();
@@ -59,10 +63,16 @@ export default function LoginPage() {
         form,
         { withCredentials: true }
       );
+      if(res.data.error){
+        setLoading(false);
+        setError(res.data.error);
+        return;
+      }
       console.log(res.data);
       startTimer();
       setStep(2);
       setError("");
+      setLoading(false);
     } catch (err) {
       if (err.response) {
         setError(err.response.data?.error || "Server error occurred");
@@ -71,13 +81,16 @@ export default function LoginPage() {
       } else {
         setError(err.message);
       }
+      setLoading(false);
     }
+    setLoading(false);
   };
 
   // Verify OTP
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     let otpIsValid = false;
     let data = null;
     try {
@@ -94,6 +107,7 @@ export default function LoginPage() {
       console.log(res.data);
       otpIsValid = !res.data.error;
       data = res.data;
+      setLoading(false);
     } catch (err) {
       if (err.response) {
         setError(err.response.data?.error || "Server error occurred");
@@ -102,6 +116,7 @@ export default function LoginPage() {
       } else {
         setError(err.message);
       }
+      setLoading(false);
     }
 
     // reset OTP field
@@ -115,6 +130,7 @@ export default function LoginPage() {
     } else {
       setError("Invalid OTP. Try again.");
     }
+    setLoading(false);
   };
 
   const inputBase =
@@ -170,6 +186,11 @@ export default function LoginPage() {
               </div>
 
               {error && <p className="text-red-500 text-sm">{error}</p>}
+              {loading ? (
+                <div className="w-full px-4 py-3 rounded-md text-white text-sm font-medium focus:ring-2 bg-primary flex justify-center">
+                  <Loader />
+                </div>
+              ) : (
               <button
                 type="submit"
                 disabled={!canContinue}
@@ -182,6 +203,7 @@ export default function LoginPage() {
               >
                 Continue
               </button>
+              )}
             </form>
 
             <p className="mt-4 text-center text-sm text-muted">
@@ -218,12 +240,19 @@ export default function LoginPage() {
 
               {error && <p className="text-red-500 text-sm">{error}</p>}
 
+
+              {loading ? (
+                <div className="w-full px-4 py-3 rounded-md text-white text-sm font-medium focus:ring-2 bg-primary flex justify-center">
+                  <Loader />
+                </div>
+              ) : (
               <button
                 type="submit"
                 className="w-full px-4 py-3 bg-primary text-white rounded-md text-sm font-medium hover:brightness-95"
               >
                 Verify
               </button>
+              )}
             </form>
 
             <p className="mt-4 text-center text-sm text-muted">
