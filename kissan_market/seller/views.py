@@ -196,8 +196,7 @@ def accept_order(request,purchase_id):
     """Seller accepts a pending order (changes status to processing)."""
     if request.method == "POST":
         try:
-            data = json.loads(request.body)
-            purchase_id = data.get("purchase_id")
+            
 
             if not purchase_id:
                 return JsonResponse({"error": "purchase_id is required."}, status=400)
@@ -217,6 +216,8 @@ def accept_order(request,purchase_id):
             # Update order status
             purchase.status = "Processing"
             purchase.save()
+            send_order_accepted_email(purchase.buyer.email,purchase.id)
+
 
             return JsonResponse({
                 "message": "Order accepted successfully.",
@@ -228,7 +229,6 @@ def accept_order(request,purchase_id):
             return JsonResponse({"error": "Invalid JSON data."}, status=400)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
-    send_order_accepted_email(purchase.buyer.email,purchase.id)
     return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
@@ -236,11 +236,10 @@ def accept_order(request,purchase_id):
 @login_required
 def decline_order(request,purchase_id):
     """Seller declines a pending order (marks it as cancelled and restores stock)."""
+    print("Decline order called")
     if request.method == "POST":
         try:
-            data = json.loads(request.body)
-            purchase_id = data.get("purchase_id")
-            reason = data.get("reason", "No reason provided")
+            
 
             if not purchase_id:
                 return JsonResponse({"error": "purchase_id is required."}, status=400)
@@ -260,7 +259,7 @@ def decline_order(request,purchase_id):
             #  Restore stock for all vegetables in this order
             for item in purchase.items.all():
                 veg = item.vegetable
-                veg.stock_quantity += item.quantity
+                veg.stock += item.quantity
                 veg.save()
 
             #  Mark order as cancelled
@@ -302,7 +301,7 @@ def decline_order(request,purchase_id):
                 "message": "Order declined successfully and stock restored.",
                 "purchase_id": purchase.id,
                 "new_status": purchase.status,
-                "reason": reason
+                
             }, status=200)
 
         except json.JSONDecodeError:
@@ -337,7 +336,7 @@ def mark_order_as_completed(request, purchase_id):
     items = purchase.items.all()
     for item in items:
         review = item.reviews.filter(buyer=purchase.buyer).first()
-        rating = review.rating
+        
         transaction_data = {
             "purchase_id": purchase.id,
             "transaction_id": f"{purchase.id}-{item.id}",   # unique per item
@@ -349,8 +348,7 @@ def mark_order_as_completed(request, purchase_id):
             "status": purchase.status,
             "created_at": purchase.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             "variety": item.vegetable.variety,
-            "rating":rating   
-
+            "rating":None   
         }
         add_transaction(transaction_data)
 

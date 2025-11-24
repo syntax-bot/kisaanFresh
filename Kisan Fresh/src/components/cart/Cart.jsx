@@ -4,6 +4,7 @@ import {
   addToCart,
   removeFromCart,
   decreaseQuantityby1,
+  clearCart,
 } from "../../feature/cartSlice";
 import AddToCartBtn from "../misc/AddToCartBtn";
 import axios from "axios";
@@ -38,6 +39,7 @@ const CartPage = () => {
     );
     console.log(res);
     setLoading(false);
+    dispatch(clearCart())
     navigate("/customer/pending_purchases");
   };
 

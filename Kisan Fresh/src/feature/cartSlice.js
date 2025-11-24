@@ -44,7 +44,7 @@ const cartSlice = createSlice({
     },
 
     // Clears all items from cart
-    clearCart: (state) => {f
+    clearCart: (state) => {
       state.cartItems = [];
       updateTotals(state);
     },
