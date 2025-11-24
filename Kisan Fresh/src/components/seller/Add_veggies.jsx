@@ -11,7 +11,6 @@ function Add_veggies() {
     unit: "kg",
     stock: "",
     description: "",
-    freshness_level: "Fresh",
     is_available: true,
   });
 
@@ -35,6 +34,30 @@ function Add_veggies() {
   // Submit Form
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(!formData.name || !formData.price || !formData.stock || !formData.description || !image){
+      setMessage("Please fill all required fields " );
+      return;
+    }
+
+    const res = await axios.get("http://127.0.0.1:8000/seller/get_msp/", {
+      withCredentials: true,
+    });
+    console.log(res.data);
+
+    const filtered = res.data.msp_data.filter((item) =>
+      item.Crop.toLowerCase().includes(formData.name.toLowerCase())
+    );
+    console.log(filtered)
+
+    if (filtered.length > 0) {
+      const mspPrice = filtered[0]["2025-26-MSP"];
+      if (formData.price < mspPrice/100) {
+        setMessage(
+          `Price should be at least the Minimum Support Price (MSP) of ₹${mspPrice}`
+        );
+        return;
+      }
+    }
 
     const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
@@ -50,7 +73,7 @@ function Add_veggies() {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          withCredentials: true, 
+          withCredentials: true,
         }
       );
       toast(res.data.message);
@@ -139,18 +162,8 @@ function Add_veggies() {
           className="w-full p-2 border rounded"
         />
 
-        {/* Freshness */}
-        <select
-          name="freshness_level"
-          value={formData.freshness_level}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        >
-          <option value="Fresh">Fresh</option>
-          <option value="Very Fresh">Very Fresh</option>
-          <option value="Medium Fresh">Medium Fresh</option>
-        </select>
-
+        
+        {/* Image Upload */}
         <input
           className="block w-full text-sm text-gray-700 
              border border-gray-300 rounded 
