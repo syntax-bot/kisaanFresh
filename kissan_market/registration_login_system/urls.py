@@ -14,6 +14,7 @@ urlpatterns = [
     path('buyer_logout/',logout_buyer,name='logout_buyer'),
     path("seller_profile/", seller_profile_view, name="seller_profile"),
     path("buyer_profile/", buyer_profile_view, name="buyer_profile"),
+    path("auth/",auth_status,name="auth_status"),
 
 
 

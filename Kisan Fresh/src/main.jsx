@@ -37,8 +37,9 @@ import CompletedPurchaseSeller from "./components/seller/CompletedPurchases.jsx"
 import SellAnalytics from "./components/seller/SellAnalytics.jsx";
 import AddReview from "./components/buyer/AddReview.jsx";
 import BuyerAnalytics from "./components/buyer/Dashboard.jsx";
-    
-
+import Add_bidding_veggies from "./components/seller/Add_bidding_veggies.jsx"
+import My_Bidding_Veg from "./components/seller/My_Bidding_Veg.jsx";
+import BiddingItemPage from "./components/itempage/BiddingItemPage.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -63,6 +64,8 @@ const router = createBrowserRouter(
           <Route path="profile" element={<CustomerProfile />} />
           <Route path="completed_purchases" element={<CompletedPurchases />} />
           <Route path="pending_purchases" element={<PendingPurchases />} />
+          <Route path="nearby_live_bids" element={<BiddingItemPage />} />
+
           <Route path="review/:purchaseId/:itemId" element={<AddReview />} />
           <Route path="analysis" element={<BuyerAnalytics />} />
         </Route>
@@ -75,6 +78,8 @@ const router = createBrowserRouter(
           <Route path="completed_purchases" element={<CompletedPurchaseSeller/>} />
           <Route path="sell_analytics" element={<SellAnalytics/>} />
           <Route path="add_veggies" element={<Add_veggies />} />
+          <Route path="add_bid_veggies" element={<Add_bidding_veggies />} />
+          <Route path="my_bid_veg" element={<My_Bidding_Veg />} />
           <Route path="my_vegetables" element={<SellerVegetables />} />
           <Route path="edit_veggies/:id" element={<EditVegetable />} />
         </Route>

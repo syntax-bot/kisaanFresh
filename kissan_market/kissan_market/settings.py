@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,7 +42,11 @@ INSTALLED_APPS = [
     'seller',
     'buyer',
     'corsheaders',
+    "channels",
+    'bidding',
+    
 ]
+ASGI_APPLICATION = "kissan_market.asgi.application"
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",  # 👈 must be at top (after SecurityMiddleware if you use it)
@@ -72,7 +77,21 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'kissan_market.wsgi.application'
+#WSGI_APPLICATION = 'kissan_market.wsgi.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#     },
+# }
 
 
 # Database
@@ -110,11 +129,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
+USE_TZ = False
+
 
 USE_I18N = True
 
-USE_TZ = True
+
 
 
 # Static files (CSS, JavaScript, Images)
