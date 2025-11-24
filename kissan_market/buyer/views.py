@@ -24,8 +24,10 @@ from utils.utility_buyer import send_buyer_cancel_email,send_buyer_order_email,s
 def nearby_vegetables(request):
     if request.user.role != 'buyer':
        return JsonResponse({'error': 'Only buyers can access this endpoint'}, status=403)
-
-    buyer = request.user.buyer_profile
+    try:
+       buyer = request.user.buyer_profile
+    except  Exception:
+        return JsonResponse({"error":"Profile Not Found"})
 
     buyer_lat = buyer.latitude
     buyer_lon = buyer.longitude
@@ -44,6 +46,35 @@ def nearby_vegetables(request):
     data = list(vegetables.values())
     return JsonResponse({"vegetables": data})
 
+
+@csrf_exempt
+@login_required
+def nearby_vegetables_filter(request):
+    if request.user.role != 'buyer':
+       return JsonResponse({'error': 'Only buyers can access this endpoint'}, status=403)
+    try:
+       buyer = request.user.buyer_profile
+    except  Exception:
+        return JsonResponse({"error":"Profile Not Found"})
+
+    buyer_lat = buyer.latitude
+    buyer_lon = buyer.longitude
+    max_distance = 20  # km
+
+    sellers = SellerProfile.objects.all()
+    nearby_sellers = []
+
+    for seller in sellers:
+        distance = calculate_distance(buyer_lat, buyer_lon, seller.latitude, seller.longitude)
+        if distance <= max_distance:
+            nearby_sellers.append(seller)
+
+    vegetables = Vegetable.objects.filter(seller__in=[s.user for s in nearby_sellers])
+    veg_name = request.GET.get("name")
+    if veg_name:
+        vegetables = vegetables.filter(name__iexact=veg_name)
+
+    return JsonResponse({"vegetables": list(vegetables.values())})
 
 
 
@@ -347,3 +378,15 @@ def get_transactions_buyer(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+@login_required
+@csrf_exempt
+def sellers_other_veg(request):
+    seller_id=request.Get("id")
+    if not seller_id:
+        return JsonResponse({"error": "Seller ID required"}, status=400)
+
+    seller = User.objects.filter(id=seller_id).first()
+    vegetables = Vegetable.objects.filter(seller=seller)[:4]
+    data = list(vegetables.values())
+    return JsonResponse({"vegetables": data})

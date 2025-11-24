@@ -22,5 +22,7 @@ urlpatterns = [
     
     # Get Transactions For Buyer
     path('my_transactions/', views.get_transactions_buyer, name='get_transaction_buyer'),
+    path("nearby_veg_filter/",views.nearby_vegetables_filter),
+    path("seller_other_veg/",views.sellers_other_veg),
 
 ]
