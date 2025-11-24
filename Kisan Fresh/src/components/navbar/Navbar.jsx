@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 
 function Navbar() {
   const isUserLoggedIn = useSelector(state => state.user.isAuthenticated); // This should be replaced with actual authentication logic
-  const userRole = useSelector(state => state.user.userInfo.role); // This should be replaced with actual authentication logic
+  const userRole = useSelector(state => state.user.userInfo?.role); // This should be replaced with actual authentication logic
   // useEffect(() => {
 
   // }, [isUserLoggedIn]);

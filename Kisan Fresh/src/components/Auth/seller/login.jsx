@@ -126,7 +126,7 @@ export default function LoginPage() {
       toast("OTP verified!");
       console.log(data);
       dispatch(login(data));
-      navigate("/seller/my_vegies");
+      navigate("/seller/my_vegetables");
     } else {
       setError("Invalid OTP. Try again.");
     }

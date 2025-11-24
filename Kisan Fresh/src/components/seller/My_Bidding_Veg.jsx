@@ -139,18 +139,18 @@ const cancelBid = async (bidId) => {
   if (vegetables.length === 0) {
     return (
       <>
+      <div className="flex justify-center gap-8 mb-10">
+        <button onClick={() => navigate("/seller/add_bid_veggies")} className="bg-green-600 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl hover:bg-green-700 transition-all font-medium">
+          Add Vegetable to BidBazar
+        </button>
+        <button onClick={() => navigate("/seller/completed_bids")} className="bg-green-600 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl hover:bg-green-700 transition-all font-medium">
+          My Bid History
+        </button>
+      </div>
       <div className="text-center py-20 text-gray-600">
         <p className="text-lg font-semibold">No vegetables added yet.</p>
         <p className="text-sm">Add vegetables to see them here.</p>
       </div>
-      <div className="flex justify-center mb-10">
-    <button
-      onClick={() => navigate("/seller/add_bid_veggies")}
-      className="bg-green-600 text-white px-6 py-2 rounded-lg shadow hover:bg-green-700 transition"
-    >
-      Add Vegetable To BidBazar
-    </button>
-  </div>
       </>
     );
   }
@@ -160,14 +160,15 @@ const cancelBid = async (bidId) => {
       <h1 className="text-3xl font-bold text-green-700 text-center mb-10">
         Your Vegetables
       </h1>
-      <div className="flex justify-center mb-10">
-    <button
-      onClick={() => navigate("/seller/add_bid_veggies")}
-      className="bg-green-600 text-white px-6 py-2 rounded-lg shadow hover:bg-green-700 transition"
-    >
-      Add Vegetable To BidBazar
-    </button>
-  </div>
+      <div className="flex justify-center gap-8 mb-10">
+        <button onClick={() => navigate("/seller/add_bid_veggies")} className="bg-green-600 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl hover:bg-green-700 transition-all font-medium">
+          Add Vegetable to BidBazar
+        </button>
+        <button onClick={() => navigate("/seller/completed_bids")} className="bg-green-600 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl hover:bg-green-700 transition-all font-medium">
+          My Bid History
+        </button>
+      </div>
+
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-6xl mx-auto">
         {vegetables.map((veg) => (
           <div
