@@ -85,14 +85,17 @@ function Add_veggies() {
         />
 
         {/* Variety */}
-        <input
-          type="text"
+        <select
           name="variety"
-          placeholder="Variety (e.g. Red, Hybrid)"
+          placeholder="Variety (e.g. Organic, Local)"
           value={formData.variety}
           onChange={handleChange}
           className="w-full p-2 border rounded"
-        />
+        >
+          <option value="">Select Variety</option>
+          <option value="Organic">Organic</option>
+          <option value="Hybrid">Hybrid</option>
+        </select>
 
         {/* Price */}
         <input
