@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { use, useEffect } from "react";
 import kisanFreshLogo from "../../assets/kisanfreshlogo-removebg.png";
 import CartSvg from "../../assets/CartSvg";
 import userImage from "../../assets/UserImage.jsx";
@@ -9,16 +9,15 @@ import { useSelector } from "react-redux";
 
 
 function Navbar() {
-  const isUserLoggedIn = useSelector(state => state.user.isAuthenticated); // This should be replaced with actual authentication logic
-  const userRole = useSelector(state => state.user.userInfo.role); // This should be replaced with actual authentication logic
-  // useEffect(() => {
-
-  // }, [isUserLoggedIn]);
+  const isUserLoggedIn = useSelector(state => state.user.isAuthenticated); 
+  const userRole = useSelector(state => state.user.userInfo?.role); 
+  
+  const path = userRole === "buyer" ? "/home" : "/seller/my_vegetables";
   return (
     <nav>
       
       <div className="bg-surface p-2 sm:mx-5 flex  justify-between items-center">
-        <Link to={`/`}>
+        <Link to={path}>
           <div className="logo ">
             <img className="h-14" src={kisanFreshLogo} alt="Kisan Fresh Logo" />
           </div>

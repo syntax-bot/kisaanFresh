@@ -17,6 +17,26 @@ export default function SellerProfile() {
     longitude: "",
   });
 
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(successget, errorget);
+    } else {
+      toast.error("Geolocation is not supported by this browser.");
+    }
+  }
+
+  function successget(position) {
+    setseller_profile((prev) => ({
+      ...prev,
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+    }));
+  }
+
+  function errorget() {
+    toast.error("Sorry, no position available.");
+  }
+
   // get request for profile
   const getProfile = async () => {
     setLoading(true);
@@ -55,15 +75,9 @@ export default function SellerProfile() {
     if (!seller_profile.upi_id.trim()) return "UPI ID is required";
     if (!seller_profile.address.trim()) return "address is required";
     if (!seller_profile.name.trim()) return "name is required";
-    if (
-      !seller_profile.latitude.trim() ||
-      isNaN(Number(seller_profile.latitude))
-    )
+    if (!seller_profile.latitude || isNaN(Number(seller_profile.latitude)))
       return "Valid latitude is required";
-    if (
-      !seller_profile.longitude.trim() ||
-      isNaN(Number(seller_profile.longitude))
-    )
+    if (!seller_profile.longitude || isNaN(Number(seller_profile.longitude)))
       return "Valid longitude is required";
     return null;
   };
@@ -102,7 +116,7 @@ export default function SellerProfile() {
 
       setSuccess(res.data?.message || "Profile created successfully.");
 
-      // update profile locally
+      
       setProfile((p) => ({
         ...(p || {}),
         name: seller_profile.name,
@@ -139,14 +153,14 @@ export default function SellerProfile() {
     }
 
     try {
-      const profile = new FormData();
-      profile.append("name", seller_profile.name);
-      profile.append("upi_id", seller_profile.upi_id);
-      profile.append("address", seller_profile.address);
-      profile.append("latitude", seller_profile.latitude);
-      profile.append("longitude", seller_profile.longitude);
-
-      const res = await axios.post(
+      const profile = {
+        "name": seller_profile.name,
+        "upi_id": seller_profile.upi_id,
+        "address": seller_profile.address,
+        "latitude": seller_profile.latitude,
+        "longitude": seller_profile.longitude,
+      }
+      const res = await axios.put(
         `http://127.0.0.1:8000/seller_profile/`,
         profile,
         {
@@ -156,7 +170,7 @@ export default function SellerProfile() {
 
       setSuccess(res.data?.message || "Profile updated successfully.");
 
-      // update profile locally
+      
       setProfile((p) => ({
         ...(p || {}),
         name: seller_profile.name,
@@ -309,6 +323,7 @@ export default function SellerProfile() {
                   <div>
                     <label className={labelClass}>Latitude</label>
                     <input
+                      disabled={true}
                       name="latitude"
                       value={seller_profile.latitude}
                       onChange={handleChange}
@@ -319,6 +334,7 @@ export default function SellerProfile() {
                   <div>
                     <label className={labelClass}>Longitude</label>
                     <input
+                      disabled={true}
                       name="longitude"
                       value={seller_profile.longitude}
                       onChange={handleChange}
@@ -327,6 +343,15 @@ export default function SellerProfile() {
                     />
                   </div>
                 </div>
+
+                {isEditing && (
+                  <div
+                    className=" max-w-fit  mt-2 px-4 py-2 rounded-md bg-sky-200 hover:bg-sky-300"
+                    onClick={getLocation}
+                  >
+                    Use Current Location
+                  </div>
+                )}
 
                 <div className="flex gap-3 items-center">
                   <button
