@@ -77,7 +77,8 @@ TEMPLATES = [
     },
 ]
 
-#WSGI_APPLICATION = 'kissan_market.wsgi.application'
+#
+# WSGI_APPLICATION = 'kissan_market.wsgi.application'
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
- import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import {login, logout} from "../../../feature/userSlice.js";
-
+import { login, logout } from "../../../feature/userSlice.js";
+import Loader from "../../misc/Loader.jsx";
 export default function RegistrationPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
 
   const [deatails, setDeatails] = useState({
@@ -31,6 +31,7 @@ export default function RegistrationPage() {
   const canContinue = phoneIsValid && emailIsValid;
 
   const handleInputChange = (e) => {
+    setError("");
     const { name, value } = e.target;
     setDeatails((prev) => ({ ...prev, [name]: value }));
   };
@@ -52,7 +53,7 @@ export default function RegistrationPage() {
   const handleDetailsSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
+    setLoading(true);
     try {
       const form = new FormData();
       form.append("email", deatails.email);
@@ -66,6 +67,7 @@ export default function RegistrationPage() {
       setStep(2);
       setError("");
     } catch (err) {
+      setLoading(false);
       if (err.response) {
         setError(err.response.data?.error || "Server error occurred");
       } else if (err.request) {
@@ -74,12 +76,13 @@ export default function RegistrationPage() {
         setError(err.message);
       }
     }
+    setLoading(false);
   };
 
-  // Verify OTP
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     let otpIsValid = false;
     let data = null;
 
@@ -87,10 +90,10 @@ export default function RegistrationPage() {
       const form = new FormData();
       form.append("email", deatails.email);
       form.append("email_otp", otp);
-      console.log(form.get("email_otp") , form.get("email"));
+      console.log(form.get("email_otp"), form.get("email"));
       const res = await axios.post("http://127.0.0.1:8000/verify_buyer/", form);
-      console.log(res) ;
-      otpIsValid = !res.data.error; 
+      console.log(res);
+      otpIsValid = !res.data.error;
       data = res.data;
     } catch (err) {
       if (err.response) {
@@ -100,6 +103,7 @@ export default function RegistrationPage() {
       } else {
         setError(err.message);
       }
+      setLoading(false);
     }
 
     setOtp("");
@@ -112,12 +116,16 @@ export default function RegistrationPage() {
     } else {
       setError("Invalid OTP. Try again.");
     }
+    setLoading(false);
   };
 
-  const inputBase = "relative block w-full appearance-none border px-3 py-3 text-text placeholder-muted focus:z-10 focus:outline-none sm:text-sm rounded-md";
-  const validClass = "border-green-500 focus:border-green-500 focus:ring-green-500";
+  const inputBase =
+    "relative block w-full appearance-none border px-3 py-3 text-text placeholder-muted focus:z-10 focus:outline-none sm:text-sm rounded-md";
+  const validClass =
+    "border-green-500 focus:border-green-500 focus:ring-green-500";
   const invalidClass = "border-red-500 focus:border-red-500 focus:ring-red-500";
-  const neutralClass ="border-gray-300 focus:border-primary focus:ring-primary";
+  const neutralClass =
+    "border-gray-300 focus:border-primary focus:ring-primary";
 
   return (
     <div className="flex items-center justify-center bg-background font-inter min-h-screen p-6">
@@ -197,18 +205,24 @@ export default function RegistrationPage() {
               </div>
 
               {error && <p className="text-red-500 text-sm">{error}</p>}
-              <button
-                type="submit"
-                disabled={!canContinue}
-                className={`w-full px-4 py-3 rounded-md text-white text-sm font-medium focus:ring-2
+              {loading ? (
+                <div className="w-full px-4 py-3 rounded-md text-white text-sm font-medium focus:ring-2 bg-primary flex justify-center">
+                  <Loader />
+                </div>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={!canContinue}
+                  className={`w-full px-4 py-3 rounded-md text-white text-sm font-medium focus:ring-2
                   ${
                     canContinue
                       ? "bg-primary hover:brightness-95"
                       : "bg-gray-400 cursor-not-allowed"
                   }`}
-              >
-                Continue
-              </button>
+                >
+                  Continue
+                </button>
+              )}
             </form>
 
             <p className="mt-4 text-center text-sm text-muted">
@@ -246,12 +260,18 @@ export default function RegistrationPage() {
 
               {error && <p className="text-red-500 text-sm">{error}</p>}
 
-              <button
-                type="submit"
-                className="w-full px-4 py-3 bg-primary text-white rounded-md text-sm font-medium hover:brightness-95"
-              >
-                Verify & Register
-              </button>
+              {loading ? (
+                <div className="w-full px-4 py-3 rounded-md text-white text-sm font-medium focus:ring-2 bg-primary flex justify-center">
+                  <Loader />
+                </div>
+              ) : (
+                <button
+                  type="submit"
+                  className="w-full px-4 py-3 bg-primary text-white rounded-md text-sm font-medium hover:brightness-95"
+                >
+                  Verify & Register
+                </button>
+              )}
             </form>
 
             <p className="mt-4 text-center text-sm text-muted">

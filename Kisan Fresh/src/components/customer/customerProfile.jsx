@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function CustomerProfile() {
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,6 @@ export default function CustomerProfile() {
       });
       setIsEditing(false);
     } catch (err) {
-      
       if (err.response && err.response.status === 404) {
         setProfile(null);
       } else {
@@ -51,18 +51,35 @@ export default function CustomerProfile() {
     }
   };
 
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(successget, errorget);
+    } else {
+      toast.error("Geolocation is not supported by this browser.");
+    }
+  }
+
+  function successget(position) {
+    setcustomer_profile((prev) => ({
+      ...prev,
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+    }));
+  }
+
+  function errorget() {
+    toast.error("Sorry, no position available.");
+  }
+
   const validate = () => {
     if (!customer_profile.upi_id.trim()) return "UPI ID is required";
     if (!customer_profile.address.trim()) return "address is required";
     if (!customer_profile.name.trim()) return "name is required";
-    if (
-      !customer_profile.latitude.trim() ||
-      isNaN(Number(customer_profile.latitude))
-    )
+    if (!customer_profile.latitude || isNaN(Number(customer_profile.latitude)))
       return "Valid latitude is required";
     if (
-      !customer_profile.longitude.trim() ||
-      isNaN(Number(customer_profile.longitude))
+      isNaN(Number(customer_profile.longitude)) ||
+      !customer_profile.longitude
     )
       return "Valid longitude is required";
     return null;
@@ -139,13 +156,16 @@ export default function CustomerProfile() {
     }
 
     try {
-      const profile = new FormData();
-      profile.append("name", customer_profile.name);
-      profile.append("upi_id", customer_profile.upi_id);
-      profile.append("address", customer_profile.address);
-      profile.append("latitude", customer_profile.latitude);
-      profile.append("longitude", customer_profile.longitude);
+      const profile = {
+        "name": customer_profile.name,
+        "upi_id": customer_profile.upi_id,
+        "address": customer_profile.address,
+        "latitude": customer_profile.latitude,
+        "longitude": customer_profile.longitude,
+      }
+      setSubmitting(true);
 
+      console.log(profile)
       const res = await axios.put(
         `http://127.0.0.1:8000/buyer_profile/`,
         profile,
@@ -153,10 +173,9 @@ export default function CustomerProfile() {
           withCredentials: true,
         }
       );
-
+      console.log(res.data)
       setSuccess(res.data?.message || "Profile updated successfully.");
-
-      // update profile locally
+      
       setProfile((p) => ({
         ...(p || {}),
         name: customer_profile.name,
@@ -245,6 +264,8 @@ export default function CustomerProfile() {
                   </div>
                 </div>
 
+                
+
                 <div className="flex gap-3 mt-4">
                   <button
                     className="px-4 py-2 rounded-md bg-primary text-white"
@@ -308,6 +329,7 @@ export default function CustomerProfile() {
                   <div>
                     <label className={labelClass}>Latitude</label>
                     <input
+                      disabled={true}
                       name="latitude"
                       value={customer_profile.latitude}
                       onChange={handleChange}
@@ -318,6 +340,7 @@ export default function CustomerProfile() {
                   <div>
                     <label className={labelClass}>Longitude</label>
                     <input
+                      disabled={true}
                       name="longitude"
                       value={customer_profile.longitude}
                       onChange={handleChange}
@@ -326,6 +349,15 @@ export default function CustomerProfile() {
                     />
                   </div>
                 </div>
+
+                {isEditing && (
+                  <div
+                    className=" max-w-fit  mt-2 px-4 py-2 rounded-md bg-sky-200 hover:bg-sky-300"
+                    onClick={getLocation}
+                  >
+                    Use Current Location
+                  </div>
+                )}
 
                 <div className="flex gap-3 items-center">
                   <button
