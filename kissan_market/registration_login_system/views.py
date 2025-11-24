@@ -349,24 +349,25 @@ def buyer_profile_view(request):
     elif request.method == "PUT":
         import json
 
-    try:
-        data = json.loads(request.body)
-    except:
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
+        try:
+            data = json.loads(request.body)
+        except:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
 
-    profile = BuyerProfile.objects.filter(user=request.user).first()
-    if not profile:
-        return JsonResponse({"error": "Profile not found."}, status=404)
+        profile = BuyerProfile.objects.filter(user=request.user).first()
+        if not profile:
+            return JsonResponse({"error": "Profile not found."}, status=404)
 
-    profile.name = data.get("name", profile.name)
-    profile.upi_id = data.get("upi_id", profile.upi_id)
-    profile.address = data.get("address", profile.address)
-    profile.latitude = data.get("latitude", profile.latitude)
-    profile.longitude = data.get("longitude", profile.longitude)
-    profile.save()
+        profile.name = data.get("name", profile.name)
+        profile.upi_id = data.get("upi_id", profile.upi_id)
+        profile.address = data.get("address", profile.address)
+        profile.latitude = data.get("latitude", profile.latitude)
+        profile.longitude = data.get("longitude", profile.longitude)
+        profile.save()
 
-    return JsonResponse({"message": "Profile updated successfully"})
+        return JsonResponse({"message": "Profile updated successfully"})
 
+    return JsonResponse({"error": "Invalid request method."}, status=405)
 
 @login_required
 @csrf_exempt
@@ -428,23 +429,25 @@ def seller_profile_view(request):
     # PUT — Update seller profile
     # ------------------------------
     elif request.method == "PUT":
-        from django.http import QueryDict
+            import json
 
-        # Parse form-data from PUT body
-        put_data = QueryDict(request.body)
+            try:
+                data = json.loads(request.body)
+            except:
+                return JsonResponse({"error": "Invalid JSON"}, status=400)
 
-        profile = SellerProfile.objects.filter(user=request.user).first()
-        if not profile:
-            return JsonResponse({"error": "Profile not found."}, status=404)
+            profile = SellerProfile.objects.filter(user=request.user).first()
+            if not profile:
+                return JsonResponse({"error": "Profile not found."}, status=404)
 
-        profile.name = put_data.get("name", profile.name)
-        profile.upi_id = put_data.get("upi_id", profile.upi_id)
-        profile.address = put_data.get("address", profile.address)
-        profile.latitude = put_data.get("latitude", profile.latitude)
-        profile.longitude = put_data.get("longitude", profile.longitude)
-        profile.save()
+            profile.name = data.get("name", profile.name)
+            profile.upi_id = data.get("upi_id", profile.upi_id)
+            profile.address = data.get("address", profile.address)
+            profile.latitude = data.get("latitude", profile.latitude)
+            profile.longitude = data.get("longitude", profile.longitude)
+            profile.save()
 
-        return JsonResponse({"message": "Profile updated successfully!"})
+            return JsonResponse({"message": "Profile updated successfully"})
     return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
