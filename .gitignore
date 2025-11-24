@@ -72,3 +72,5 @@ coverage/
 .cache/
 
 *.pyc
+kissan_market/db.sqlite3
+package-lock.json
