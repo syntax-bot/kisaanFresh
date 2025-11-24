@@ -27,6 +27,8 @@ urlpatterns = [
     path('bidding/', include('bidding.urls')),
 
     path('schema-viewer/', include('schema_viewer.urls')),
+    path('payment/', include('payment.urls')),
+
 
 ]
 
