@@ -18,7 +18,7 @@ function App() {
         );
 
         if (res.data.error) return;
-
+        console.log(res.data)
         setItems(res.data.vegetables);
         setFilteredItems(res.data.vegetables); 
       } catch (error) {
