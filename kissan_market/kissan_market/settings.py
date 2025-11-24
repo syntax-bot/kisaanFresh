@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'corsheaders',
     "channels",
     'bidding',
+    'payment',
     
 ]
 ASGI_APPLICATION = "kissan_market.asgi.application"

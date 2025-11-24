@@ -3,7 +3,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from registration_login_system.models import User
-from .models import Vegetable
+from .models import Vegetable,TransactionRecord
+from registration_login_system.models import SellerProfile
 from django.contrib.auth.decorators import login_required
 from buyer.models import *
 import json
@@ -14,15 +15,30 @@ from django.conf import settings
 import csv
 from pathlib import Path
 from utils.utility_seller import send_order_accepted_email,send_order_declined_email
-@csrf_exempt
-@login_required
 
+
+def add_transaction(data):
+    TransactionRecord.objects.create(
+        
+        buyer=data["buyer"],
+        seller=data["seller"],
+        vegetable_name=data["vegetable_name"],
+        variety=data["variety"],
+        quantity=data["quantity"],
+        total_price=data["total_price"],
+        status=data["status"],
+        created_at=data["created_at"],
+    )
+@login_required
 @csrf_exempt
 def add_vegetable(request):
     if request.method == 'POST':
         try:
             seller = request.user  # Logged-in seller
-
+            try:
+                sellerprof=SellerProfile.objects.get(seller=seller)
+            except SellerProfile.DoesNotExist():
+                return JsonResponse({'error':'Seller_Profile is not there'},status=403)
             # Ensure that only sellers can add vegetables
             if not hasattr(seller, 'role') or seller.role != "seller":
                 return JsonResponse({'error': 'Only sellers can add vegetables'}, status=403)
@@ -234,6 +250,8 @@ def accept_order(request,purchase_id):
 @login_required
 @csrf_exempt
 def decline_order(request,purchase_id):
+    
+        
     """Seller declines a pending order (marks it as cancelled and restores stock)."""
     if request.method == "POST":
         try:
@@ -268,11 +286,10 @@ def decline_order(request,purchase_id):
             for item in purchase.items.all():
                 # Review for cancelled items = None
                 
-                rating_value = 0
+                
 
                 transaction_data = {
-                    "purchase_id": purchase.id,
-                    "transaction_id": f"{purchase.id}-{item.id}-CANCEL",  # unique for cancelled
+                      # unique for cancelled
                     "buyer": purchase.buyer.email,
                     "seller": seller.email,
 
@@ -282,11 +299,10 @@ def decline_order(request,purchase_id):
                     "quantity": float(item.quantity),
                     "total_price": float(item.total_price),
 
-                    # Review info
-                    "rating": rating_value,  # Usually None when cancelled
+                      
 
                     # Cancellation info
-                    "status": "Cancelled",
+                    "status": "CancelledBySeller",
                     
 
                     # Timestamp
@@ -333,10 +349,8 @@ def mark_order_as_completed(request, purchase_id):
 
     items = purchase.items.all()
     for item in items:
-        review = item.reviews.filter(buyer=purchase.buyer).first()
         transaction_data = {
-            "purchase_id": purchase.id,
-            "transaction_id": f"{purchase.id}-{item.id}",   # unique per item
+            
             "buyer": purchase.buyer.email,
             "seller": purchase.seller.email,
             "total_price": float(item.total_price),
@@ -345,7 +359,7 @@ def mark_order_as_completed(request, purchase_id):
             "status": purchase.status,
             "created_at": purchase.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             "variety": item.vegetable.variety,
-            "rating":None, 
+             
 
         }
         add_transaction(transaction_data)
@@ -363,35 +377,39 @@ def mark_order_as_completed(request, purchase_id):
 @csrf_exempt
 @login_required
 def get_transactions_seller(request):
-    # 1. Check if logged-in user is buyer
-    if request.user.role != "seller":
+    # 1. Check if logged-in user is a seller
+    if not hasattr(request.user, "role") or request.user.role != "seller":
         return JsonResponse({"error": "Access denied. Only sellers can view this."}, status=403)
 
-    # 2. Allow only GET request
+    # 2. Allow only GET
     if request.method != "GET":
-        return JsonResponse({"error": "Only GET method is allowed"}, status=405)
+        return JsonResponse({"error": "Only GET method allowed"}, status=405)
 
-    seller=request.user.email
-    file_path = os.path.join(settings.MEDIA_ROOT, "transactions", "transactions.csv")
-    if not os.path.isfile(file_path):
-        return JsonResponse({"transactions": []}, status=200)
+    # 3. Seller email
+    seller_email = request.user.email
 
-    transactions = []
+    # 4. Fetch all transactions for this seller
+    transactions = TransactionRecord.objects.filter(seller=seller_email).order_by("-saved_on")
 
-    try:
-        # Read CSV using pandas
-        df = pd.read_csv(file_path)
+    # 5. Convert to JSON-safe list
+    data = [
+        {
+            
+            "buyer": t.buyer,
+            "seller": t.seller,
+            "vegetable_name": t.vegetable_name,
+            "variety": t.variety,
+            "quantity": float(t.quantity),
+            "total_price": float(t.total_price),
+            "status": t.status,
+            "created_at": t.created_at,
+            "saved_on": t.saved_on.strftime("%Y-%m-%d %H:%M:%S")
+        }
+        for t in transactions
+    ]
 
-        # Filter using pandas
-        filtered = df[df["seller"] == seller]
-
-        # Convert rows to list of dicts
-        result = filtered.to_dict(orient="records")
-
-        return JsonResponse({"transactions": result}, status=200)
-
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"transactions": data}, safe=False)
+    
 
 
 
