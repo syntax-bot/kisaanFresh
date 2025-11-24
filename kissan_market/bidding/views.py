@@ -64,49 +64,6 @@ def add_bidding_vegetable(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
-#need_to_make_changes
-def edit_bidding_vegetable(request,veg_id):
-    if request.method == 'POST':
-        try:
-            seller = request.user  # Logged-in seller
-
-            # Ensure that only sellers can add vegetables
-            if not hasattr(seller, 'role') or seller.role != "seller":
-                return JsonResponse({'error': 'Only sellers can edit bidding vegetables'}, status=403)
-            try:
-                vegetable = Bidding_vegetable.objects.get(id=veg_id, seller=seller)
-            except Bidding_vegetable.DoesNotExist:
-                return JsonResponse({'error': 'Bidding Vegetable not found or not owned by you'}, status=404)
-
-            vegetable.name = request.POST.get('name')
-            vegetable.variety = request.POST.get('variety', '')
-            vegetable.price = request.POST.get('price')
-            vegetable.unit = request.POST.get('unit', 'kg')
-            vegetable.stock = request.POST.get('stock')
-            vegetable.description = request.POST.get('description', '')
-            vegetable.is_available = request.POST.get('is_available', 'true').lower() == 'true'
-
-            
-            vegetable.save()
-            return JsonResponse({
-                'message': ' Bidding Vegetable updated successfully!',
-                'updated_data': {
-                    'id': vegetable.id,
-                    'name': vegetable.name,
-                    'price': float(vegetable.price),
-                    'stock': vegetable.stock,
-                    'unit': vegetable.unit,
-                    'description': vegetable.description,
-                    'is_available': vegetable.is_available,
-                }
-            }, status=200)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
-
 
 @login_required
 @csrf_exempt
@@ -329,3 +286,127 @@ def place_bid(request):
     )
 
     return JsonResponse({"message": "Bid placed successfully!", "highest": highest_amount}, status=201)
+
+@login_required
+@csrf_exempt
+def get_my_completed_bids_seller(request):
+    seller=request.user
+    if seller.role!= "seller":
+        return JsonResponse({"error": "Only sellers can view this"}, status=403)
+    
+    completed_bids = BidWinner.objects.filter(
+        bid__vegetable__seller=seller
+    ).select_related("bid", "winner", "bid__vegetable")
+
+    data = []
+
+    for record in completed_bids:
+        veg = record.bid.vegetable
+        data.append({
+            "vegetable_name": veg.name,
+            "min_bid_price": str(veg.min_bid_price),
+
+            "bid_id": record.bid.id,
+            "starting_time": record.bid.starting_time,
+            "ending_time": record.bid.ending_time,
+
+            "winner_email": record.winner.email,
+            "winner_id": record.winner.id,
+            "final_amount": str(record.final_amount),
+            "winning_time": record.winning_time,
+        })
+
+    return JsonResponse({"completed_bids": data})
+
+
+
+@login_required
+@csrf_exempt
+def get_my_completed_bids_buyer(request):
+    if request.user.role != "buyer":
+        return JsonResponse({"error": "Only buyers can view this"}, status=403)
+
+    buyer = request.user
+    completed_bids = BidWinner.objects.filter(
+        winner=buyer
+    ).select_related("bid", "bid__vegetable")
+
+    data = []
+
+    for record in completed_bids:
+        veg = record.bid.vegetable
+        data.append({
+            "vegetable_name": veg.name,
+            "min_bid_price": str(veg.min_bid_price),
+
+            "bid_id": record.bid.id,
+            "seller_email": veg.seller.email,
+            "seller_id": veg.seller.id,
+
+            "starting_time": record.bid.starting_time,
+            "ending_time": record.bid.ending_time,
+
+            "final_amount": str(record.final_amount),
+            "winning_time": record.winning_time,
+        })
+
+    return JsonResponse({"my_completed_bids": data})
+
+@login_required
+@csrf_exempt
+def get_nearby_upcoming_bids(request):
+    user = request.user
+    if not hasattr(user, 'role') or user.role != "buyer":
+        return JsonResponse({"error": "Only buyers can view upcoming bidding vegetables"}, status=403)
+    
+    try:
+        buyer_profile = BuyerProfile.objects.get(user=user)
+    except BuyerProfile.DoesNotExist:
+        return JsonResponse({"error": "Please complete your profile first!"}, status=404)
+
+    buyer_lat = float(buyer_profile.latitude)
+    buyer_lon = float(buyer_profile.longitude)
+
+    now = timezone.now()
+    ten_minutes_later = now + timedelta(minutes=10)
+
+    result = []
+
+    for veg in Bidding_vegetable.objects.filter(is_available=True):
+
+        bid = veg.bids.filter(
+            starting_time__gt=ten_minutes_later,   # starts after 10 minutes
+            is_active=True
+        ).order_by('starting_time').first()
+
+        if not bid:
+            continue  
+
+        try:
+            seller_profile = SellerProfile.objects.get(user=veg.seller)
+        except SellerProfile.DoesNotExist:
+            continue
+
+        dist = calculate_distance(
+            buyer_lat, buyer_lon,
+            float(seller_profile.latitude),
+            float(seller_profile.longitude)
+        )
+
+        if dist <= 20:
+            result.append({
+                "vegetable_id": veg.id,
+                "name": veg.name,
+                "min_bid_price": str(veg.min_bid_price),
+                "unit": veg.unit,
+                "image": veg.image.url if veg.image else None,
+                "stock": str(veg.stock),
+                "description": veg.description,
+                "distance_km": round(dist, 2),
+
+                "bid_id": bid.id,
+                "starting_time": bid.starting_time.strftime("%Y-%m-%d %H:%M:%S"),
+                "ending_time": bid.ending_time.strftime("%Y-%m-%d %H:%M:%S"),
+            })
+
+    return JsonResponse({"upcoming_bidding": result}, status=200)

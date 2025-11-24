@@ -218,7 +218,6 @@ def accept_order(request,purchase_id):
             purchase.save()
             send_order_accepted_email(purchase.buyer.email,purchase.id)
 
-
             return JsonResponse({
                 "message": "Order accepted successfully.",
                 "purchase_id": purchase.id,
@@ -232,11 +231,10 @@ def accept_order(request,purchase_id):
     return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
-@csrf_exempt
 @login_required
+@csrf_exempt
 def decline_order(request,purchase_id):
     """Seller declines a pending order (marks it as cancelled and restores stock)."""
-    print("Decline order called")
     if request.method == "POST":
         try:
             
@@ -336,7 +334,6 @@ def mark_order_as_completed(request, purchase_id):
     items = purchase.items.all()
     for item in items:
         review = item.reviews.filter(buyer=purchase.buyer).first()
-        
         transaction_data = {
             "purchase_id": purchase.id,
             "transaction_id": f"{purchase.id}-{item.id}",   # unique per item
@@ -348,7 +345,8 @@ def mark_order_as_completed(request, purchase_id):
             "status": purchase.status,
             "created_at": purchase.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             "variety": item.vegetable.variety,
-            "rating":None   
+            "rating":None, 
+
         }
         add_transaction(transaction_data)
 
