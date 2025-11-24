@@ -145,7 +145,7 @@ const BiddingItemPage = () => {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold text-green-700 mb-4">
-        Live Auctions Near You 🔥
+        Live Auctions Near You
       </h1>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

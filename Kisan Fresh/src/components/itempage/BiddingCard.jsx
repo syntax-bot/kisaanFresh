@@ -1,15 +1,19 @@
+// src/components/BiddingCard.jsx
 import React from "react";
 import Countdown from "../../hooks/CountDown";
 
-const BiddingCard = ({ veg, placeBid, handleBidChange }) => {
-
-  const countdown = Countdown(veg.ending_time);
+const BiddingCard = ({ veg, placeBid, handleBidChange, mode = "live" }) => {
+  // mode: "live" or "upcoming"
+  const isUpcoming = mode === "upcoming";
+  // For live auctions use ending_time; for upcoming show start_time
+  const countdown = Countdown(isUpcoming ? veg.start_time : veg.ending_time);
 
   return (
     <div className="bg-white p-4 rounded shadow border">
       {veg.image && (
         <img
           src={`http://127.0.0.1:8000${veg.image}`}
+          alt={veg.name}
           className="w-full h-32 object-cover rounded"
         />
       )}
@@ -22,9 +26,11 @@ const BiddingCard = ({ veg, placeBid, handleBidChange }) => {
       </p>
 
       <p className="font-semibold text-blue-600 mt-2">
-        Time Left:{" "}
+        {isUpcoming ? "Starts In: " : "Time Left: "}
         {countdown.expired
-          ? "Expired"
+          ? isUpcoming
+            ? "Started"
+            : "Expired"
           : `${countdown.minutes}m : ${countdown.seconds}s`}
       </p>
 
@@ -32,19 +38,38 @@ const BiddingCard = ({ veg, placeBid, handleBidChange }) => {
         Highest Bid: ₹{veg.current_highest_bid}
       </p>
 
+      {/* If it's upcoming, disable bid input or optionally show pre-bid UI */}
       <input
         type="number"
-        className="border rounded w-full px-3 py-1 mt-3"
-        placeholder="Enter your bid"
+        className={`border rounded w-full px-3 py-1 mt-3 ${isUpcoming ? "opacity-60 cursor-not-allowed" : ""}`}
+        placeholder={isUpcoming ? "Bidding opens when sale starts" : "Enter your bid"}
         onChange={(e) => handleBidChange(veg.vegetable_id, e.target.value)}
+        disabled={isUpcoming}
       />
 
-      <button
-        className="bg-blue-600 text-white w-full py-2 rounded mt-2 hover:bg-blue-700"
-        onClick={() => placeBid(veg)}
-      >
-        Place Bid
-      </button>
+      {isUpcoming ? (
+        <div className="flex gap-2 mt-2">
+          <button
+            className="bg-gray-400 text-white w-full py-2 rounded cursor-not-allowed"
+            disabled
+          >
+            Place Bid
+          </button>
+          <button
+            className="bg-yellow-500 text-black px-3 py-2 rounded"
+            onClick={() => alert("We'll notify you when this auction starts (placeholder)")}
+          >
+            Notify me
+          </button>
+        </div>
+      ) : (
+        <button
+          className="bg-blue-600 text-white w-full py-2 rounded mt-2 hover:bg-blue-700"
+          onClick={() => placeBid(veg)}
+        >
+          Place Bid
+        </button>
+      )}
     </div>
   );
 };
