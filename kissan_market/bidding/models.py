@@ -38,7 +38,7 @@ class SellerCreateBid(models.Model):
     starting_time = models.DateTimeField(default=timezone.now)
     ending_time = models.DateTimeField()
     is_active = models.BooleanField(default=True)
-    
+
     @property
     def is_future_bid(self):
         return self.starting_time > timezone.now()
@@ -59,6 +59,9 @@ class BuyerBid(models.Model):
     bid_price = models.DecimalField(max_digits=10, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+
+    class Meta:
+        ordering = ["-bid_price", "-timestamp"]
     @property
     def highest_bid(self):
         return self.buyer_bids.order_by('-bid_price').first()
@@ -71,4 +74,12 @@ class BuyerBid(models.Model):
     def __str__(self):
         return f"Bid: ₹{self.bid_price} by {self.buyer.email}"
      
-     
+
+class BidWinner(models.Model):
+    bid = models.OneToOneField(SellerCreateBid, on_delete=models.CASCADE, related_name="winner_record")
+    winner = models.ForeignKey(User, on_delete=models.CASCADE)
+    final_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    winning_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Winner: {self.winner.email} | Amount: ₹{self.final_amount}"

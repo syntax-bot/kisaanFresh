@@ -1,124 +1,161 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
+import BiddingCard from "./BiddingCard";
 
 const BiddingItemPage = () => {
   const [biddingItems, setBiddingItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [bidAmount, setBidAmount] = useState({});
 
-  const fetchLiveBiddingVeggies = async () => {
+  const socketRef = useRef({}); // Stores all sockets
+
+  // --------------------------------------------------------
+  // Fetch live bids
+  // --------------------------------------------------------
+  const fetchLiveBids = async () => {
     try {
-      const res = await axios.get(
-        "http://127.0.0.1:8000/bidding/nearby/",
-        { withCredentials: true }
-      );
-      setBiddingItems(res.data.live_bidding || []);
+      const res = await axios.get("http://127.0.0.1:8000/bidding/nearby/", {
+        withCredentials: true,
+      });
+
+      const items = (res.data.live_bidding || []).map((item) => ({
+        ...item,
+        current_highest_bid: item.current_highest_bid || item.min_bid_price,
+      }));
+
+      setBiddingItems(items);
+      setLoading(false);
     } catch (err) {
-      setError("Failed to load bidding vegetables");
+      setError("Failed to load live bidding data");
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
-    fetchLiveBiddingVeggies();
+  fetchLiveBids(); // fetch once
+}, []);
 
-    // auto refresh every 30s
-    const interval = setInterval(fetchLiveBiddingVeggies, 30000);
-    return () => clearInterval(interval);
+
+  // --------------------------------------------------------
+  // Handle incoming WS broadcast
+  // --------------------------------------------------------
+  const handleIncoming = useCallback((data) => {
+    if (!data?.vegetable_id) return;
+
+    setBiddingItems((prev) =>
+      prev.map((item) =>
+        item.vegetable_id === data.vegetable_id
+          ? {
+              ...item,
+              current_highest_bid: data.new_highest_bid,
+              highest_bidder: data.highest_bidder,
+            }
+          : item
+      )
+    );
   }, []);
 
-  const handleBidChange = (vegId, value) => {
-    setBidAmount(prev => ({ ...prev, [vegId]: value }));
-  };
+  // --------------------------------------------------------
+  // Establish WebSocket connections ONCE per vegetable
+  // --------------------------------------------------------
+  useEffect(() => {
+    biddingItems.forEach((item) => {
+      const vegId = item.vegetable_id;
+
+      // If socket already exists → skip
+      if (socketRef.current[vegId]) return;
+
+      const ws = new WebSocket(`ws://127.0.0.1:8000/ws/bid/${vegId}/`);
+
+      ws.onopen = () => console.log("WS OPENED →", vegId);
+      ws.onerror = (err) => console.log("WS ERROR →", vegId, err);
+      ws.onclose = (ev) => console.log("WS CLOSED →", vegId, ev.code);
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          handleIncoming(data);
+        } catch (err) {
+          console.error("WS Parse Error", err);
+        }
+      };
+
+      socketRef.current[vegId] = ws; // Save reference
+    });
+  }, [biddingItems, handleIncoming]);
+
+  // --------------------------------------------------------
+  // Cleanup ALL WS only when component unmounts
+  // --------------------------------------------------------
+  useEffect(() => {
+    return () => {
+      console.log("Unmount → Closing all sockets");
+      Object.values(socketRef.current).forEach((ws) => ws.close());
+    };
+  }, []);
+
+  // --------------------------------------------------------
+  // Bid placement
+  // --------------------------------------------------------
+  const [bidAmount, setBidAmount] = useState({});
+
+  const handleBidChange = (vegId, value) =>
+    setBidAmount((prev) => ({ ...prev, [vegId]: value }));
 
   const placeBid = async (veg) => {
-    const amount = bidAmount[veg.vegetable_id];
-    if (!amount || amount <= veg.min_bid_price) {
-      alert("Bid must be greater than minimum bid price!");
+    const amount = parseFloat(bidAmount[veg.vegetable_id]);
+
+    if (!amount || amount <= parseFloat(veg.current_highest_bid)) {
+      alert("Bid must be greater than current highest bid!");
       return;
     }
 
     try {
       const res = await axios.post(
         "http://127.0.0.1:8000/bidding/place-bid/",
-        {
-          bid_id: veg.bid_id,
-          amount: amount,
-        },
+        { bid_id: veg.bid_id, amount },
         { withCredentials: true }
       );
 
-      alert(res.data.message || "Bid placed successfully!");
-      fetchLiveBiddingVeggies(); // refresh
+      alert("Bid placed!");
+
+      // Temporary optimistic update
+      setBiddingItems((prev) =>
+        prev.map((i) =>
+          i.vegetable_id === veg.vegetable_id
+            ? { ...i, current_highest_bid: amount }
+            : i
+        )
+      );
     } catch (err) {
-      alert(err.response?.data?.error || "Something went wrong!");
+      alert(err.response?.data?.error || "Error placing bid");
     }
   };
 
-  const renderCountdown = (endTime) => {
-    const end = new Date(endTime);
-    const now = new Date();
-    const diff = end - now;
-
-    if (diff <= 0) return "Expired";
-
-    const mins = Math.floor(diff / 60000);
-    const secs = Math.floor((diff % 60000) / 1000);
-    return `${mins}m : ${secs}s`;
-  };
-
+  // --------------------------------------------------------
+  // Render UI
+  // --------------------------------------------------------
   if (loading) return <div className="p-6 text-center">Loading...</div>;
   if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
-  if (biddingItems.length === 0)
-    return <div className="p-6 text-center text-gray-500">No live bids nearby</div>;
+  if (!biddingItems.length)
+    return (
+      <div className="p-6 text-center text-gray-600">No live auctions near you</div>
+    );
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold text-green-700 mb-4">
-        Live Bidding Near You 🥕
+        Live Auctions Near You 🔥
       </h1>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {biddingItems.map((veg) => (
-          <div key={veg.bid_id} className="bg-white shadow p-4 rounded-lg border">
-            {veg.image && (
-              <img
-                src={`http://127.0.0.1:8000${veg.image}`}
-                alt={veg.name}
-                className="w-full h-32 object-cover rounded mb-2"
-              />
-            )}
-
-            <h3 className="text-lg font-semibold">{veg.name}</h3>
-            <p className="text-sm text-gray-600">{veg.description}</p>
-            <p className="mt-1 text-green-700 font-bold">
-              Min Bid: ₹{veg.min_bid_price}/{veg.unit}
-            </p>
-            <p className="text-xs text-gray-500">
-              Distance: {veg.distance_km} km away
-            </p>
-
-            <p className="font-semibold text-blue-600 mt-2">
-              Time Left: {renderCountdown(veg.ending_time)}
-            </p>
-
-            <input
-              type="number"
-              className="border rounded w-full px-3 py-1 mt-3"
-              placeholder="Enter your bid"
-              onChange={(e) =>
-                handleBidChange(veg.vegetable_id, e.target.value)
-              }
-            />
-
-            <button
-              className="bg-blue-600 text-white w-full py-2 rounded mt-2 hover:bg-blue-700"
-              onClick={() => placeBid(veg)}
-            >
-              Place Bid
-            </button>
-          </div>
+          <BiddingCard
+            key={veg.bid_id}
+            veg={veg}
+            placeBid={placeBid}
+            handleBidChange={handleBidChange}
+          />
         ))}
       </div>
     </div>

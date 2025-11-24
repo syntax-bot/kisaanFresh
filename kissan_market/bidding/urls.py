@@ -11,6 +11,8 @@ urlpatterns = [
     path("get-bids/",get_bids),
     path("create-bid/",create_bid),
     path("nearby/",get_bidding_veg_nearby),
+    path("place-bid/",place_bid),
+
 
 
 

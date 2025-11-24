@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,8 +42,11 @@ INSTALLED_APPS = [
     'seller',
     'buyer',
     'corsheaders',
+    "channels",
     'bidding',
+    
 ]
+ASGI_APPLICATION = "kissan_market.asgi.application"
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",  # 👈 must be at top (after SecurityMiddleware if you use it)
@@ -73,7 +77,21 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'kissan_market.wsgi.application'
+#WSGI_APPLICATION = 'kissan_market.wsgi.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#     },
+# }
 
 
 # Database

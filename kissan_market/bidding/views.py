@@ -6,6 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from registration_login_system.models import *
 from buyer.util import *
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 # Create your views here.
 
 
@@ -265,3 +267,65 @@ def get_bidding_veg_nearby(request):
             })
 
     return JsonResponse({"live_bidding": result}, status=200)
+
+
+@login_required
+@csrf_exempt
+def place_bid(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except Exception:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    bid_id = data.get("bid_id")
+    amount = data.get("amount")
+    try:
+        amount = float(amount)
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "Invalid amount"}, status=400)
+
+    try:
+        bid_obj = SellerCreateBid.objects.get(id=bid_id, is_active=True)
+    except SellerCreateBid.DoesNotExist:
+        return JsonResponse({"error": "Bid not found or inactive"}, status=404)
+
+    now = timezone.now()
+    if not (bid_obj.starting_time <= now <= bid_obj.ending_time):
+        return JsonResponse({"error": "Bidding not active"}, status=400)
+
+    # Check amount > current highest or > min
+    current_max = BuyerBid.objects.filter(bid=bid_obj).order_by('-bid_price').first()
+    min_required = float(bid_obj.vegetable.min_bid_price)
+    current_max_amount = float(current_max.bid_price) if current_max else 0.0
+    if amount <= max(min_required, current_max_amount):
+        return JsonResponse({"error": "Bid must be greater than current highest and minimum"}, status=400)
+
+    # Create bid
+    new_bid = BuyerBid.objects.create(buyer=request.user, bid=bid_obj, bid_price=amount)
+
+    # After creating, compute new highest
+    highest = BuyerBid.objects.filter(bid=bid_obj).order_by('-bid_price', 'timestamp').first()
+    highest_amount = float(highest.bid_price)
+
+    # Broadcast update to channel group for this vegetable
+    channel_layer = get_channel_layer()
+    payload = {
+        "vegetable_id": bid_obj.vegetable.id,
+        "bid_id": bid_obj.id,
+        "new_highest_bid": highest_amount,
+        "highest_bidder": request.user.email,
+        "timestamp": new_bid.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    }
+
+    async_to_sync(channel_layer.group_send)(
+        f"bid_{bid_obj.vegetable.id}",
+        {
+            "type": "broadcast_bid",
+            "payload": payload,
+        }
+    )
+
+    return JsonResponse({"message": "Bid placed successfully!", "highest": highest_amount}, status=201)
