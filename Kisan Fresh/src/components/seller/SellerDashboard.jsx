@@ -70,6 +70,12 @@ const SellerDashboard = () => {
             Profile
           </button>
           <button
+            onClick={() => navigate("/seller/my_bid_veg")}
+            className="py-3 w-full bg-blue-400 text-white rounded-lg hover:bg-blue-600"
+          >
+            Bid Bazar
+          </button>
+          <button
             onClick={() => navigate("/seller/sell_analytics")}
             className="py-3 w-full bg-blue-400 text-white rounded-lg hover:bg-blue-600"
           >

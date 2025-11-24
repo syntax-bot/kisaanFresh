@@ -30,7 +30,7 @@ const BuyerAnalytics = () => {
     fetchTransactions();
   }, []);
 
-  // 👉 Format Data for Charts
+  // Format Data for Charts
   const spendingOverTime = transactions.map((t) => ({
     date: t.date,
     amount: parseFloat(t.total_price || t.amount || 0),
@@ -61,7 +61,7 @@ const BuyerAnalytics = () => {
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-16">
       <h1 className="text-3xl font-bold text-green-700 text-center mb-10">
-        💹 Purchase Analytics
+        Purchase Analytics
       </h1>
 
       {/* SUMMARY */}
@@ -79,7 +79,7 @@ const BuyerAnalytics = () => {
       {/* SPENDING OVER TIME */}
       <div className="bg-white shadow p-6 rounded-lg mb-10 max-w-4xl mx-auto">
         <h2 className="text-xl font-semibold text-gray-700 mb-4">
-          📅 Spending Over Time
+          Spending Over Time
         </h2>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={spendingOverTime}>
@@ -96,7 +96,7 @@ const BuyerAnalytics = () => {
       {/* TOP VEGETABLES */}
       <div className="bg-white shadow p-6 rounded-lg mb-10 max-w-4xl mx-auto">
         <h2 className="text-xl font-semibold text-gray-700 mb-4">
-          🥕 Most Purchased Items
+          Most Purchased Items
         </h2>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={topVegetables}>

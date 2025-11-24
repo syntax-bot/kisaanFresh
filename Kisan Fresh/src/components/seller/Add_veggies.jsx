@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 function Add_veggies() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     variety: "",
@@ -50,7 +53,8 @@ function Add_veggies() {
           withCredentials: true, 
         }
       );
-      setMessage(` ${res.data.message}`);
+      toast(res.data.message);
+      navigate("/seller/my_vegetables");
     } catch (err) {
       setMessage(` ${err.response?.data?.error || "Something went wrong"}`);
     }
