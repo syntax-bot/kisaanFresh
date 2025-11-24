@@ -23,8 +23,8 @@ def register_seller(request):
 
         role = "seller"  # Fixed role for this endpoint
         # Check if any user exists with same email or mobile
-        existing_email = User.objects.filter(email=email, role=role).first()
-        existing_mobile = User.objects.filter(mobile=mobile, role=role).first()
+        existing_email = User.objects.filter(email=email).first()
+        existing_mobile = User.objects.filter(mobile=mobile).first()
 
         if existing_email and existing_mobile:
             return JsonResponse({"error": "User already exists with this email and mobile number."}, status=409)
@@ -201,8 +201,8 @@ def register_buyer(request):
         if not email or not mobile:
             return JsonResponse({"error": "Email and Mobile are required."})
         # Check if any buyer exists with same email or mobile
-        existing_email = User.objects.filter(email=email, role="buyer").first()
-        existing_mobile = User.objects.filter(mobile=mobile, role="buyer").first()
+        existing_email = User.objects.filter(email=email).first()
+        existing_mobile = User.objects.filter(mobile=mobile).first()
 
         if existing_email and existing_mobile:
             return JsonResponse(
