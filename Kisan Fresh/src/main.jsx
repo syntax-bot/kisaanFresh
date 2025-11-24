@@ -40,6 +40,7 @@ import BuyerAnalytics from "./components/buyer/Dashboard.jsx";
 import Add_bidding_veggies from "./components/seller/Add_bidding_veggies.jsx"
 import My_Bidding_Veg from "./components/seller/My_Bidding_Veg.jsx";
 import BiddingItemPage from "./components/itempage/BiddingItemPage.jsx";
+import SellerCompletedBidsPage from "./components/seller/CompletedBidsPage.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -80,6 +81,7 @@ const router = createBrowserRouter(
           <Route path="add_veggies" element={<Add_veggies />} />
           <Route path="add_bid_veggies" element={<Add_bidding_veggies />} />
           <Route path="my_bid_veg" element={<My_Bidding_Veg />} />
+          <Route path="completed_bids" element={<SellerCompletedBidsPage/>} />
           <Route path="my_vegetables" element={<SellerVegetables />} />
           <Route path="edit_veggies/:id" element={<EditVegetable />} />
         </Route>
