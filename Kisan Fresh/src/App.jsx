@@ -20,7 +20,7 @@ function App() {
         return ;
       }
       if (res.data.error) {
-        navigate("/customer/profile");
+        // navigate("/customer/profile");
       }
       setItems(res.data.vegetables);
       console.log(res.data.vegetables);

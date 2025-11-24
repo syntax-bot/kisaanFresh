@@ -1,7 +1,8 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import userReducer from "../feature/userSlice.js";
 import cartReducer from "../feature/cartSlice.js";
-
+import sellerVegetableReducer from "../feature/vegetableSlice.js";
+import searchVegetableReducer from "../feature/searchVegetable.js";
 import {
   persistStore,
   persistReducer,
@@ -18,7 +19,8 @@ import storage from "redux-persist/lib/storage"; // localStorage
 const rootReducer = combineReducers({
   user: userReducer,
   cart: cartReducer,
-  // sellerveges: sellerVegetableReducer,
+  vegetables: sellerVegetableReducer,
+  searchVegetables: searchVegetableReducer,
   // sellerOrders: sellerOrderReducer,
   // sellerProfile: sellerProfileReducer,
 
@@ -45,5 +47,5 @@ export const store = configureStore({
     }),
 });
 
-// Create persistor
+
 export const persistor = persistStore(store);

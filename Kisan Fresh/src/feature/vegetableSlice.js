@@ -1,21 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  userInfo: null, // or { name, email, token }
-  isAuthenticated: false,
+  vegetables: null, // or { name, email, token }
 };
 
 const sellerVegetableReducer = createSlice({
-  name: "user",
+  name: "vegetables",
   initialState,
   reducers: {
     add_veges_from_server: (state, action) => {
-      state.userInfo = action.payload;
-      state.isAuthenticated = true;
+      state.vegetables = action.payload;
     },
+    remove_veges_on_logout: (state) => {
+      state.vegetables = null;
+    }
 
   },
 });
 
-export const { login, logout } = sellerVegetableReducer.actions;
+export const { add_veges_from_server, remove_veges_on_logout } = sellerVegetableReducer.actions;
 export default sellerVegetableReducer.reducer;
