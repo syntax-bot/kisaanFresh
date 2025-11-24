@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import ItemCard from "./components/ItemCard";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
+import Loader from "./components/misc/Loader";
+import { useDispatch } from "react-redux";
+import { add_veges_from_server } from "./feature/vegetableSlice";
 // FilterBar component moved outside App for better performance
 const FilterBar = ({ onFilterChange }) => {
   const [filters, setFilters] = useState({
@@ -73,6 +76,7 @@ const FilterBar = ({ onFilterChange }) => {
 function App() {
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
@@ -86,6 +90,7 @@ function App() {
         console.log(res.data);
         setItems(res.data.vegetables);
         setFilteredItems(res.data.vegetables);
+        dispatch(add_veges_from_server(res.data.vegetables));
       } catch (error) {
         console.log(error);
       }
@@ -137,6 +142,9 @@ function App() {
             price={item.price}
             description={item.description}
             image={"http://127.0.0.1:8000/media/" + item.image}
+            seller_id={item.seller_id}
+            stock={item.stock}
+            unit={item.unit}
           />
         ))}
       </div>

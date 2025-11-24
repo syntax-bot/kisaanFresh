@@ -13,12 +13,12 @@ import {
 
 function ItemCard(item) {
   const dispatch = useDispatch();
-  const { id, name, price, image, description } = item;
+  const { id, name, price, image, seller_id,stock,unit, description } = item;
 
   const itemNum = useSelector((state) => selectItemQuantity(state, id)) || 0;
 
   const handleAddToCart = () => {
-    dispatch(addToCart({ id, name,  price, image }));
+    dispatch(addToCart({ id, name, price, image }));
   };
 
   const handleDecreaseFromCart = () => {
@@ -38,6 +38,9 @@ function ItemCard(item) {
             price,
             image,
             description,
+            seller_id,
+            stock,
+            unit,
           }}
         >
           <img
@@ -45,7 +48,6 @@ function ItemCard(item) {
             src={image}
             alt={name}
           />
-          
         </Link>
 
         <div className="mt-1 px-5 pb-5">
@@ -55,7 +57,9 @@ function ItemCard(item) {
 
           <div className="flex items-center justify-between">
             <p>
-              <span className="text-xl mb-1 font-bold text-text">₹{price} </span>
+              <span className="text-xl mb-1 font-bold text-text">
+                ₹{price}{" "}
+              </span>
             </p>
           </div>
 

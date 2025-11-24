@@ -279,7 +279,7 @@ const transactions = [
 ]
 
 export default function SellAnalytics() {
-  // ✅ 1. Aggregate stats
+  
   const {
     totalOrders,
     completed,

@@ -36,8 +36,8 @@ def add_vegetable(request):
         try:
             seller = request.user  # Logged-in seller
             try:
-                sellerprof=SellerProfile.objects.get(seller=seller)
-            except SellerProfile.DoesNotExist():
+                sellerprof=SellerProfile.objects.get(user=seller)
+            except SellerProfile.DoesNotExist:
                 return JsonResponse({'error':'Seller_Profile is not there'},status=403)
             # Ensure that only sellers can add vegetables
             if not hasattr(seller, 'role') or seller.role != "seller":
