@@ -6,10 +6,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { login, logout } from "../../../feature/userSlice.js";
+
 export default function LoginPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const [deatails, setDeatails] = useState({
     phoneNumber: "",
@@ -59,6 +61,10 @@ export default function LoginPage() {
         { withCredentials: true }
       );
       console.log(res.data);
+      if (res.data.error) {
+        setError(res.data.error);
+        return;
+      }
       startTimer();
       setStep(2);
       setError("");

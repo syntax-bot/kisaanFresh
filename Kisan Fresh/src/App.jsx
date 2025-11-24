@@ -9,9 +9,16 @@ function App() {
   const navigate = useNavigate();
   useEffect(() => {
     (async () => {
-      const res = await axios.get("http://127.0.0.1:8000/buyer/vegetables/nearby/" , {
+      
+      try {
+        const res = await axios.get("http://127.0.0.1:8000/buyer/vegetables/nearby/" , {
         withCredentials: true,
       });
+      } catch (error) {
+        console.log(error) ;
+        // navigate("/customer/login") ;
+        return ;
+      }
       if(res.data.error){
         navigate("/customer/profile");
       }

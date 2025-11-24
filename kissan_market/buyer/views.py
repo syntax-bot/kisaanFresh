@@ -24,7 +24,10 @@ def nearby_vegetables(request):
     if request.user.role != 'buyer':
        return JsonResponse({'error': 'Only buyers can access this endpoint'}, status=403)
 
-    buyer = request.user.buyer_profile
+    try:
+       buyer = request.user.buyer_profile
+    except  Exception:
+        return JsonResponse({"error":"Profile Not Found"})
 
     buyer_lat = buyer.latitude
     buyer_lon = buyer.longitude
