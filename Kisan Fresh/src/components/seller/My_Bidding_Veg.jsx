@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "../misc/Loader";
+import { useNavigate } from "react-router-dom";
 
 const My_Bidding_Veg = () => {
   const [vegetables, setVegetables] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   // Fetch seller vegetables
   const fetchVegetables = async () => {
@@ -136,10 +138,20 @@ const cancelBid = async (bidId) => {
 
   if (vegetables.length === 0) {
     return (
+      <>
       <div className="text-center py-20 text-gray-600">
         <p className="text-lg font-semibold">No vegetables added yet.</p>
         <p className="text-sm">Add vegetables to see them here.</p>
       </div>
+      <div className="flex justify-center mb-10">
+    <button
+      onClick={() => navigate("/seller/add_bid_veggies")}
+      className="bg-green-600 text-white px-6 py-2 rounded-lg shadow hover:bg-green-700 transition"
+    >
+      Add Vegetable To BidBazar
+    </button>
+  </div>
+      </>
     );
   }
 
@@ -148,7 +160,14 @@ const cancelBid = async (bidId) => {
       <h1 className="text-3xl font-bold text-green-700 text-center mb-10">
         Your Vegetables
       </h1>
-
+      <div className="flex justify-center mb-10">
+    <button
+      onClick={() => navigate("/seller/add_bid_veggies")}
+      className="bg-green-600 text-white px-6 py-2 rounded-lg shadow hover:bg-green-700 transition"
+    >
+      Add Vegetable To BidBazar
+    </button>
+  </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-6xl mx-auto">
         {vegetables.map((veg) => (
           <div

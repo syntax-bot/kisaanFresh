@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 
 function Navbar() {
   const isUserLoggedIn = useSelector(state => state.user.isAuthenticated); // This should be replaced with actual authentication logic
+  const userRole = useSelector(state => state.user.userInfo.role); // This should be replaced with actual authentication logic
   // useEffect(() => {
 
   // }, [isUserLoggedIn]);
@@ -24,12 +25,12 @@ function Navbar() {
         </Link>
 
         {
-          isUserLoggedIn && <Search />
+          isUserLoggedIn && userRole === "buyer" && <Search />
         }
         
         <div className="user">
           {isUserLoggedIn ? (
-            <div className="flex">
+            userRole === "buyer" ?(<div className="flex">
               <Link to={`/customer/cart`}>
                 <button className="cart mx-1 text-primary px-2 py-1 rounded-3xl  ">
                   <CartSvg />
@@ -40,7 +41,18 @@ function Navbar() {
                   <UserImage />
                 </button>
               </Link>
-            </div>
+            </div>) : (<div className="flex">
+              <Link to={`/seller/add_veggies`}>
+                <button className="cart mx-1 text-primary px-2 py-1 rounded-3xl  ">
+                  <CartSvg />
+                </button>
+              </Link>
+              <Link to={`/seller/dashboard`}>
+                <button class="profile mx-1 text-primary px-2 py-1 rounded-3xl  ">
+                  <UserImage />
+                </button>
+              </Link>
+            </div>)
           ) : (
             <div className="flex">
               <Link 

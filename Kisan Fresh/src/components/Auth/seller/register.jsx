@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer} from "react-toastify";
 
 import axios from "axios";
 import { toast } from "react-toastify";
+import Loader from "../../misc/Loader.jsx";
 
 export default function RegistrationPage() {
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
 
   const [deatails, setDeatails] = useState({
@@ -29,6 +32,7 @@ export default function RegistrationPage() {
   const canContinue = phoneIsValid && emailIsValid;
 
   const handleInputChange = (e) => {
+    setError("");
     const { name, value } = e.target;
     setDeatails((prev) => ({ ...prev, [name]: value }));
   };
@@ -50,7 +54,7 @@ export default function RegistrationPage() {
   const handleDetailsSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
+    setLoading(true);
     try {
       const form = new FormData();
       form.append("email", deatails.email);
@@ -64,20 +68,23 @@ export default function RegistrationPage() {
       setStep(2);
       setError("");
     } catch (err) {
+      setLoading(false);
       if (err.response) {
         setError(err.response.data?.error || "Server error occurred");
       } else if (err.request) {
-        setError("No response from server. Check server is running.");
+        setError("No response from server. Server unreachable.");
       } else {
         setError(err.message);
       }
     }
+    setLoading(false);
   };
 
   // Verify OTP
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     let otpIsValid = false;
     let data = null;
     try {
@@ -96,6 +103,7 @@ export default function RegistrationPage() {
       } else {
         setError(err.message);
       }
+      setLoading(true);
     }
 
     // reset OTP field
@@ -107,6 +115,7 @@ export default function RegistrationPage() {
     } else {
       setError("Invalid OTP. Try again.");
     }
+    setLoading(true);
   };
 
   const inputBase = "relative block w-full appearance-none border px-3 py-3 text-text placeholder-muted focus:z-10 focus:outline-none sm:text-sm rounded-md";
@@ -192,6 +201,11 @@ export default function RegistrationPage() {
               </div>
 
               {error && <p className="text-red-500 text-sm">{error}</p>}
+              {loading ? (
+                <div className="w-full px-4 py-3 rounded-md text-white text-sm font-medium focus:ring-2 bg-primary flex justify-center">
+                  <Loader />
+                </div>
+              ) : (
               <button
                 type="submit"
                 disabled={!canContinue}
@@ -204,6 +218,7 @@ export default function RegistrationPage() {
               >
                 Continue
               </button>
+              )}
             </form>
 
             <p className="mt-4 text-center text-sm text-muted">
@@ -240,6 +255,11 @@ export default function RegistrationPage() {
               />
 
               {error && <p className="text-red-500 text-sm">{error}</p>}
+              {loading ? (
+                <div className="w-full px-4 py-3 rounded-md text-white text-sm font-medium focus:ring-2 bg-primary flex justify-center">
+                  <Loader />
+                </div>
+              ) : (
 
               <button
                 type="submit"
@@ -247,6 +267,7 @@ export default function RegistrationPage() {
               >
                 Verify & Register
               </button>
+              )}
             </form>
 
             <p className="mt-4 text-center text-sm text-muted">

@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Navigate, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 function Add_bidding_veggies() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     variety: "",
@@ -49,7 +53,8 @@ function Add_bidding_veggies() {
           withCredentials: true, 
         }
       );
-      setMessage(` ${res.data.message}`);
+      toast(res.data.message);
+      navigate("/seller/my_bid_veg");
     } catch (err) {
       setMessage(` ${err.response?.data?.error || "Something went wrong"}`);
     }
