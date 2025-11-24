@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import PlusSvg from "../assets/PlusSvg";
 import MinusSvg from "../assets/MinusSvg";
 import CartSvg from "../assets/CartSvg";
-import RatingStars from "../assets/RatingStars";
 import AddToCartBtn from "./misc/AddToCartBtn";
-import Rating from "./misc/Rating";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -15,20 +13,18 @@ import {
 
 function ItemCard(item) {
   const dispatch = useDispatch();
-  const { id, name, oldPrice, price, rating, image , description} = item;
-  
+  const { id, name, price, image, description } = item;
 
   const itemNum = useSelector((state) => selectItemQuantity(state, id)) || 0;
 
   const handleAddToCart = () => {
-    dispatch(addToCart({ id, name, oldPrice, price, rating, image }));
+    dispatch(addToCart({ id, name,  price, image }));
   };
 
   const handleDecreaseFromCart = () => {
     dispatch(decreaseQuantityby1(id));
-    console.log(description)
+    console.log(description);
   };
-  const discount = ((oldPrice - price) / oldPrice) * 100;
 
   return (
     <>
@@ -37,11 +33,9 @@ function ItemCard(item) {
           className="relative mx-2 mt-2 flex h-50 sm:h-60 rounded-xl"
           to={`/item/${id}`}
           state={{
-            id ,
+            id,
             name,
-            oldPrice,
             price,
-            rating,
             image,
             description,
           }}
@@ -51,11 +45,7 @@ function ItemCard(item) {
             src={image}
             alt={name}
           />
-          {discount > 0 && (
-            <span className="absolute top-0 left-0 m-2 rounded-full bg-primary px-2 text-center text-sm font-medium text-surface">
-              {discount}% OFF
-            </span>
-          )}
+          
         </Link>
 
         <div className="mt-1 px-5 pb-5">
@@ -65,14 +55,9 @@ function ItemCard(item) {
 
           <div className="flex items-center justify-between">
             <p>
-              <span className="text-xl font-bold text-text">₹{price} </span>
-              <span className="text-sm text-muted line-through">
-                ₹{oldPrice}
-              </span>
+              <span className="text-xl mb-1 font-bold text-text">₹{price} </span>
             </p>
           </div>
-
-          <Rating rating={rating} />
 
           <AddToCartBtn
             itemNum={itemNum}

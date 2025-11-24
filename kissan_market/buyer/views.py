@@ -19,6 +19,20 @@ from django.conf import settings
 import csv
 import pandas as pd
 from utils.utility_buyer import send_buyer_cancel_email,send_buyer_order_email,send_seller_order_email
+
+def add_transaction(data):
+    TransactionRecord.objects.create(
+        
+        buyer=data["buyer"],
+        seller=data["seller"],
+        vegetable_name=data["vegetable_name"],
+        variety=data["variety"],
+        quantity=data["quantity"],
+        total_price=data["total_price"],
+        status=data["status"],
+        created_at=data["created_at"],
+    )
+
 @csrf_exempt
 @login_required
 def nearby_vegetables(request):
@@ -253,8 +267,7 @@ def cancel_order(request, purchase_id):
         rating_value = review.rating if review else None
 
         transaction_data = {
-            "purchase_id": purchase.id,
-            "transaction_id": f"{purchase.id}-{item.id}-BUYER-CANCEL",
+            
 
             # Participant information
             "buyer": purchase.buyer.email,
@@ -266,8 +279,7 @@ def cancel_order(request, purchase_id):
             "quantity": float(item.quantity),
             "total_price": float(item.total_price),
 
-            # Review info
-            "rating": rating_value,
+            
 
             # Cancellation info
             "status": "CancelledByBuyer",
@@ -349,35 +361,41 @@ def add_purchase_review(request):
 @csrf_exempt
 @login_required
 def get_transactions_buyer(request):
-    # 1. Check if logged-in user is buyer
-    if request.user.role != "buyer":
+    # 1. Check if logged-in user is a seller
+    if not hasattr(request.user, "role") or request.user.role != "buyer":
         return JsonResponse({"error": "Access denied. Only buyers can view this."}, status=403)
 
-    # 2. Allow only GET request
+    # 2. Allow only GET
     if request.method != "GET":
-        return JsonResponse({"error": "Only GET method is allowed"}, status=405)
+        return JsonResponse({"error": "Only GET method allowed"}, status=405)
 
-    buyer=request.user.email
-    file_path = os.path.join(settings.MEDIA_ROOT, "transactions", "transactions.csv")
-    if not os.path.isfile(file_path):
-        return JsonResponse({"transactions": []}, status=200)
+    # 3. Seller email
+    buyer_email = request.user.email
 
-    transactions = []
+    # 4. Fetch all transactions for this seller
+    transactions = TransactionRecord.objects.filter(buyer=buyer_email).order_by("-saved_on")
 
-    try:
-        # Read CSV using pandas
-        df = pd.read_csv(file_path)
+    # 5. Convert to JSON-safe list
+    data = [
+        {
+            
+            "buyer": t.buyer,
+            "seller": t.seller,
+            "vegetable_name": t.vegetable_name,
+            "variety": t.variety,
+            "quantity": float(t.quantity),
+            "total_price": float(t.total_price),
+            "status": t.status,
+            "created_at": t.created_at,
+            "saved_on": t.saved_on.strftime("%Y-%m-%d %H:%M:%S")
+        }
+        for t in transactions
+    ]
 
-        # Filter using pandas
-        filtered = df[df["buyer"] == buyer]
+    return JsonResponse({"transactions": data}, safe=False)
+    
 
-        # Convert rows to list of dicts
-        result = filtered.to_dict(orient="records")
 
-        return JsonResponse({"transactions": result}, status=200)
-
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
 
 @login_required
 @csrf_exempt

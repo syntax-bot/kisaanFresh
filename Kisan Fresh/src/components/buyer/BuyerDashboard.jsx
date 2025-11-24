@@ -33,7 +33,7 @@ const BuyerDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await axios.post("http://127.0.0.1:8000/buyer_logout/",{}, {
+      const res = await axios.post("http://127.0.0.1:8000/buyer_logout/", {} , {
         withCredentials: true,
       });
       toast.success("Logged out successfully");
