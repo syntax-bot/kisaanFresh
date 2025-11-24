@@ -151,13 +151,17 @@ function Add_veggies() {
           <option value="Medium Fresh">Medium Fresh</option>
         </select>
 
-        {/* Image Upload */}
         <input
+          className="block w-full text-sm text-gray-700 
+             border border-gray-300 rounded 
+             cursor-pointer bg-gray-50 
+             file:bg-green-600 file:text-white
+             file:border-0 file:px-4 file:py-2
+             hover:file:bg-green-700"
           type="file"
           name="image"
           accept="image/*"
           onChange={handleImageChange}
-          className="w-full"
         />
 
         {/* Submit Button */}
