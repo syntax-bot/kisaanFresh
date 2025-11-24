@@ -15,8 +15,8 @@ const CompletedPurchases = () => {
         "http://127.0.0.1:8000/seller/purchases/completed",
         { withCredentials: true }
       );
-      console.log(res);
-      setOrders(res.data.completed_orders?.reverse() || []);
+      console.log(res.data);
+      setOrders(res.data.completed_purchases?.reverse() || []);
     } catch (err) {
       setError(err.response?.data?.error || "Failed to load completed orders");
       toast.error("Login required or server error");

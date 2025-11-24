@@ -10,32 +10,7 @@ const CompletedPurchases = () => {
   const [selectedPurchase, setSelectedPurchase] = useState(null);
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
-  const [purchases, setPurchases] = useState([
-    {
-      purchase_id: 15,
-      seller_name: "Ramesh Kumar",
-      seller_email: "ramesh@example.com",
-      total_price: 180,
-      status: "Completed",
-      created_at: "2025-02-09 14:22",
-      items: [
-        {
-          item_id: 33,
-          vegetable_name: "Tomato",
-          quantity: 2.5,
-          price_per_unit: 40,
-          total_price: 100,
-        },
-        {
-          item_id: 34,
-          vegetable_name: "Potato",
-          quantity: 2,
-          price_per_unit: 40,
-          total_price: 80,
-        },
-      ],
-    },
-  ]);
+  const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -50,8 +25,9 @@ const CompletedPurchases = () => {
     }
 
     try {
+      console.log({itemId , purchaseId})
       await axios.post(
-        "http://localhost:8000/add_purchase_review/",
+        "http://127.0.0.1:8000/buyer/review/add/",
         {
           purchase_item_id: itemId,
           comment,
@@ -71,13 +47,12 @@ const CompletedPurchases = () => {
   const fetchCompletedPurchases = async () => {
     setLoading(true);
     try {
-      console.log("first");
       const res = await axios.get(
         "http://127.0.0.1:8000/buyer/purchases/completed/",
         { withCredentials: true }
       );
       console.log(res.data);
-      // setPurchases(res.data.completed_purchases || []);
+      setPurchases(res.data.completed_purchases || []);
     } catch (err) {
       setError(err.response?.data?.error || "Failed to load purchases");
       toast.error("Login required or server error");
@@ -144,7 +119,11 @@ const CompletedPurchases = () => {
                     <span>
                       ₹{item.total_price}
                       <button
-                        onClick={() => setShowDialog(true)}
+                        onClick={() => {
+                          setShowDialog(true)
+                          setSelectedItem(item.item_id)
+                          setSelectedPurchase(purchase.purchase_id)
+                        }}
                         className="ml-4 px-2 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
                       >
                         review
@@ -223,6 +202,7 @@ const CompletedPurchases = () => {
                 <button
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                   onClick={() => {
+                    console.log({selectedItem, selectedPurchase, comment, rating});
                     handleReviewSubmit(
                       selectedPurchase,
                       selectedItem,

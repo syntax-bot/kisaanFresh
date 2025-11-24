@@ -4,65 +4,7 @@ import { toast } from "react-toastify";
 import Loader from "../misc/Loader";
 
 const PendingPurchases = () => {
- const [orders, setOrders] = useState([
-  {
-    purchase_id: 101,
-    buyer_email: "rahul@example.com",
-    created_at: "2025-11-22 10:30 AM",
-    status: "Pending",
-    total_price: 450,
-    items: [
-      {
-        vegetable_name: "Tomato",
-        quantity: 5,
-        total_price: 150,
-      },
-      {
-        vegetable_name: "Potato",
-        quantity: 10,
-        total_price: 300,
-      },
-    ],
-  },
-  {
-    purchase_id: 102,
-    buyer_email: "neha@example.com",
-    created_at: "2025-11-21 5:45 PM",
-    status: "Pending",
-    total_price: 220,
-    items: [
-      {
-        vegetable_name: "Onion",
-        quantity: 4,
-        total_price: 120,
-      },
-      {
-        vegetable_name: "Capsicum",
-        quantity: 2,
-        total_price: 100,
-      },
-    ],
-  },
-  {
-    purchase_id: 103,
-    buyer_email: "arjun@example.com",
-    created_at: "2025-11-20 8:15 AM",
-    status: "Pending",
-    total_price: 130,
-    items: [
-      {
-        vegetable_name: "Carrot",
-        quantity: 3,
-        total_price: 90,
-      },
-      {
-        vegetable_name: "Cucumber",
-        quantity: 2,
-        total_price: 40,
-      },
-    ],
-  },
-]);
+ const [orders, setOrders] = useState([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -92,8 +34,8 @@ const PendingPurchases = () => {
   const handleAcceptOrder = async (purchaseId) => {
     setLoading(true);
     try {
-      await axios.get(
-        `http://127.0.0.1:8000/seller/accept_orders/${purchaseId}/`,
+      await axios.post(
+        `http://127.0.0.1:8000/seller/accept_orders/${purchaseId}/`, {},
         { withCredentials: true }
       );
       toast.success("Order accepted");
@@ -107,13 +49,14 @@ const PendingPurchases = () => {
   const handleRejectOrder = async (purchaseId) => {
     setLoading(true);
     try {
-      await axios.get(
-        `http://127.0.0.1:8000/seller/reject_orders/${purchaseId}/`,
+      await axios.post(
+        `http://127.0.0.1:8000/seller/reject_orders/${purchaseId}/`,{} ,
         { withCredentials: true }
       );
       toast.success("Order rejected");
       fetchPendingPurchases();
     } catch (err) {
+      console.log(err)
       toast.error("Failed to reject order");
     }
     setLoading(false);
