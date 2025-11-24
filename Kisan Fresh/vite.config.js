@@ -8,12 +8,12 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
 
   server: {
-    host: "127.0.0.1", // 👈 IMPORTANT: Match backend domain
-    port: 5173,        // optional but recommended
+    host: "127.0.0.1", 
+    port: 5173,        
 
     proxy: {
       "/api": {
-        target: "http://127.0.0.1:8000", // 👈 use same domain
+        target: "http://127.0.0.1:8000", 
         changeOrigin: true,
         secure: false,
       },
