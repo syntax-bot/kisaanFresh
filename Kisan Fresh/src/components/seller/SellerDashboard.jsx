@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loader from "../misc/Loader";
 import { useDispatch } from "react-redux";
-import { logout } from "../../feature/userSlice";
+import {logout} from "../../feature/userSlice.js"
 const SellerDashboard = () => {
   // const [buyer, setBuyer] = useState(null);
   // const [loading, setLoading] = useState(true);

@@ -72,6 +72,12 @@ const BuyerDashboard = () => {
           >
             Profile
           </button>
+          <button
+            onClick={() => navigate("/customer/nearby_live_bids")}
+            className="py-3 w-full bg-yellow-400 text-white rounded-lg hover:bg-yellow-600"
+          >
+            Bid Bazar
+          </button>
 
           <button
             onClick={() => navigate("/customer/pending_purchases")}

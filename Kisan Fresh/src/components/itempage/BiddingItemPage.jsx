@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
 import BiddingCard from "./BiddingCard";
+import { useNavigate } from "react-router-dom";
 
 const BiddingItemPage = () => {
   const [biddingItems, setBiddingItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const socketRef = useRef({}); // Stores all sockets
 
@@ -139,11 +141,29 @@ const BiddingItemPage = () => {
   if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
   if (!biddingItems.length)
     return (
+      <>
+      <div className="flex justify-center gap-8 mb-10">
+        <button onClick={() => navigate("/customer/nearby_upcoming_bids")} className="bg-green-600 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl hover:bg-green-700 transition-all font-medium">
+          Upcoming Bids
+        </button>
+        <button onClick={() => navigate("/customer/completed_bids")} className="bg-green-600 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl hover:bg-green-700 transition-all font-medium">
+          My Bid History
+        </button>
+      </div>
       <div className="p-6 text-center text-gray-600">No live auctions near you</div>
+      </>
     );
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
+      <div className="flex justify-center gap-8 mb-10">
+        <button onClick={() => navigate("/customer/nearby_upcoming_bids")} className="bg-green-600 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl hover:bg-green-700 transition-all font-medium">
+          Upcoming Bids
+        </button>
+        <button onClick={() => navigate("/customer/completed_bids")} className="bg-green-600 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl hover:bg-green-700 transition-all font-medium">
+          My Bid History
+        </button>
+      </div>
       <h1 className="text-2xl font-bold text-green-700 mb-4">
         Live Auctions Near You
       </h1>

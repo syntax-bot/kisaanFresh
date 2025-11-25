@@ -10,7 +10,7 @@ const CompletedBidsPage = () => {
   const fetchCompletedBids = async () => {
     try {
       const res = await axios.get(
-        "http://127.0.0.1:8000/bidding/buyer_completed_bids//",
+        "http://127.0.0.1:8000/bidding/buyer_completed_bids/",
         { withCredentials: true }
       );
       setBids(res.data.my_completed_bids || []);

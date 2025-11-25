@@ -1,6 +1,7 @@
 import React, { use, useEffect } from "react";
 import kisanFreshLogo from "../../assets/kisanfreshlogo-removebg.png";
 import CartSvg from "../../assets/CartSvg";
+import AddSvg from "../../assets/AddSvg.jsx";
 import userImage from "../../assets/UserImage.jsx";
 import UserImage from "../../assets/UserImage.jsx";
 import { Link, useLocation } from "react-router";
@@ -26,33 +27,29 @@ function Navbar() {
 
         <div className="user">
           {isUserLoggedIn ? (
-            userRole === "buyer" ? (
-              <div className="flex">
-                <Link to={`/customer/cart`}>
-                  <button className="cart mx-1 text-primary px-2 py-1 rounded-3xl  ">
-                    <CartSvg />
-                  </button>
-                </Link>
-                <Link to={`/customer/dashboard`}>
-                  <button class="profile mx-1 text-primary px-2 py-1 rounded-3xl  ">
-                    <UserImage />
-                  </button>
-                </Link>
-              </div>
-            ) : (
-              <div className="flex">
-                <Link to={`/seller/add_veggies`}>
-                  <button className="cart mx-1 text-primary px-2 py-1 rounded-3xl  ">
-                    <CartSvg />
-                  </button>
-                </Link>
-                <Link to={`/seller/dashboard`}>
-                  <button class="profile mx-1 text-primary px-2 py-1 rounded-3xl  ">
-                    <UserImage />
-                  </button>
-                </Link>
-              </div>
-            )
+            userRole === "buyer" ?(<div className="flex">
+              <Link to={`/customer/cart`}>
+                <button className="cart mx-1 text-primary px-2 py-1 rounded-3xl  ">
+                  <CartSvg />
+                </button>
+              </Link>
+              <Link to={`/customer/dashboard`}>
+                <button class="profile mx-1 text-primary px-2 py-1 rounded-3xl  ">
+                  <UserImage />
+                </button>
+              </Link>
+            </div>) : (<div className="flex">
+              <Link to={`/seller/add_veggies`}>
+                <button className="cart mx-1 text-primary px-2 py-1 rounded-3xl  ">
+                  <AddSvg/>
+                </button>
+              </Link>
+              <Link to={`/seller/dashboard`}>
+                <button class="profile mx-1 text-primary px-2 py-1 rounded-3xl  ">
+                  <UserImage />
+                </button>
+              </Link>
+            </div>)
           ) : (
             <div className="flex">
               <Link
