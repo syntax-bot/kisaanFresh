@@ -105,7 +105,7 @@ function ItemPage() {
         </aside>
 
         <section class="lg:col-span-12 bg-white rounded shadow p-4">
-          <h3 class="font-semibold">Customers also bought</h3>
+          <h3 class="font-semibold">Other Vegetables from this Seller</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-4">
             {otherVeggies.map(
               (item) =>

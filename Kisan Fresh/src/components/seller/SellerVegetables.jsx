@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "../misc/Loader";
+import { Link } from "react-router";
 
 const SellerVegetables = () => {
   const [vegetables, setVegetables] = useState([]);
@@ -14,7 +15,7 @@ const SellerVegetables = () => {
     try {
       const res = await axios.get(
         "http://127.0.0.1:8000/seller/my_vegetables/",
-        { withCredentials: true } // Important for sending session cookie
+        { withCredentials: true } 
       );
       console.log(res)
       setVegetables(res.data.vegetables || []);
@@ -71,7 +72,11 @@ const SellerVegetables = () => {
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-6xl mx-auto">
         {vegetables.map((veg) => (
-          <div
+          <Link
+            to={`/seller/edit_veggies/${veg.id}`}
+            state={{
+              veg
+            }}
             key={veg.id}
             className="bg-white shadow-md border rounded-lg p-4 hover:shadow-lg transition"
           >
@@ -84,9 +89,7 @@ const SellerVegetables = () => {
             <p className="text-gray-500 text-sm mt-1">
               Stock: <span className="font-semibold">{veg.stock}</span>
             </p>
-            <p className="text-gray-500 text-sm">
-              {veg.freshness_level}
-            </p>
+          
 
             <p className="text-sm text-gray-400 mt-2">
               Added: {veg.created_at}
@@ -103,7 +106,7 @@ const SellerVegetables = () => {
                 {veg.is_available ? "Available" : "Not Available"}
               </span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
