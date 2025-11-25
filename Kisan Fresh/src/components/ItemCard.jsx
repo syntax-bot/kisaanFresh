@@ -13,7 +13,7 @@ import {
 
 function ItemCard(item) {
   const dispatch = useDispatch();
-  const { id, name, price, image, seller_id,stock,unit, description } = item;
+  const { id, name, price, image, seller_id, stock, unit, description } = item;
 
   const itemNum = useSelector((state) => selectItemQuantity(state, id)) || 0;
 
@@ -62,6 +62,9 @@ function ItemCard(item) {
               </span>
             </p>
           </div>
+          <p>
+            <span className="text-xl mb-1 font-bold text-text">Unit - {unit} </span>
+          </p>
 
           <AddToCartBtn
             itemNum={itemNum}

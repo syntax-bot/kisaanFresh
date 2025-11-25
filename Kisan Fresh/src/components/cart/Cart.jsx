@@ -69,10 +69,10 @@ const CartPage = () => {
                 />
 
                 <div className="flex-1">
-                  <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-                    {item.id}
+                  <h2 className="text-lg p-2 font-semibold text-gray-800 dark:text-white">
+                    {item.name}
                   </h2>
-                  <p className="text-gray-500 dark:text-gray-300 text-sm">
+                  <p className="text-gray-500 pb-2 dark:text-gray-300 text-sm">
                     ₹{item.price}
                   </p>
 
