@@ -124,7 +124,7 @@ export default function RegistrationPage() {
   const neutralClass ="border-gray-300 focus:border-primary focus:ring-primary";
 
   return (
-    <div className="flex items-center justify-center bg-background font-inter min-h-screen p-6">
+    <div className="flex items-center justify-center bg-background font-inter  p-6">
       <div className="w-full max-w-md space-y-8 rounded-lg bg-surface p-10 shadow-lg">
         {/* getting deatils for register */}
         {step === 1 && (
@@ -271,7 +271,7 @@ export default function RegistrationPage() {
             </form>
 
             <p className="mt-4 text-center text-sm text-muted">
-              Didn’t get a code?{" "}
+              Didn't get a code?{" "}
               <button
                 className="font-medium text-primary"
                 onClick={handleDetailsSubmit}
