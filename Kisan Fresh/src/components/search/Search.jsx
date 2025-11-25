@@ -32,8 +32,14 @@ function Search() {
     }
 
     const regex = new RegExp(word, "i");
+
+    // filter matching vegetables
     const found = vegetables.filter((veg) => regex.test(veg.name));
-    setResults(found);
+
+    // remove duplicates (by id)
+    const unique = [...new Map(found.map((item) => [item.name, item])).values()];
+
+    setResults(unique);
   }
 
   function handleInput(e) {

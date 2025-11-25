@@ -9,7 +9,7 @@ const SellerDashboard = () => {
   // const [buyer, setBuyer] = useState(null);
   // const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   //   // Fetch logged-in buyer profile
   //   const fetchProfile = async () => {
   //     try {
@@ -39,6 +39,7 @@ const SellerDashboard = () => {
       dispatch(logout());
       navigate("/seller/login");
     } catch (err) {
+      console.log(err)
       toast.error("Logout failed!");
     }
   };

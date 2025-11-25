@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
-import {toast} from "react-toastify";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const EditVegetable = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const veg = location.state?.veg || {};
 
   const [formData, setFormData] = useState({
-    name: "",
-    variety: "",
-    price: "",
-    unit: "kg",
-    stock: "",
-    description: "",
+    name: veg.name || "",
+    variety: veg.variety || "",
+    price: veg.price || "",
+    unit: veg.unit || "kg",
+    stock: veg.stock || "",
+    description: veg.description || "",
     freshness_level: "Fresh",
     is_available: true,
   });
@@ -24,14 +26,14 @@ const EditVegetable = () => {
   const fetchVeg = async () => {
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/get_seller_vegetables/`,
-        { withCredentials: true }
+        "http://127.0.0.1:8000/seller/my_vegetables/",
+        { withCredentials: true } 
       );
 
       const veg = res.data.vegetables.find((v) => v.id === parseInt(id));
       if (!veg) {
         toast.error("Vegetable not found!");
-        navigate("/my-vegetables");
+        navigate("/seller/my_vegetables");
         return;
       }
 
@@ -55,7 +57,7 @@ const EditVegetable = () => {
     });
   };
 
-    // Handle Submit
+  // Handle Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -69,19 +71,15 @@ const EditVegetable = () => {
       );
 
       toast.success("Vegetable updated!");
-      navigate("/my-vegetables");
+      navigate("/seller/my_vegetables");
     } catch (err) {
-      toast.error(
-        err.response?.data?.error || "Update failed. Try again!"
-      );
+      toast.error(err.response?.data?.error || "Update failed. Try again!");
     }
   };
 
   if (loading)
     return (
-      <div className="text-center py-20 text-lg font-semibold">
-        Loading...
-      </div>
+      <div className="text-center py-20 text-lg font-semibold">Loading...</div>
     );
 
   return (
@@ -100,13 +98,21 @@ const EditVegetable = () => {
           required
         />
 
-        <input
+      
+
+         {/* Variety */}
+        <select
           name="variety"
+          placeholder="Variety (e.g. Organic, Local)"
           value={formData.variety}
           onChange={handleChange}
-          placeholder="Variety"
           className="w-full p-2 border rounded"
-        />
+        >
+          <option value="">Select Variety</option>
+          <option value="Organic">Organic</option>
+          <option value="Hybrid">Hybrid</option>
+        </select>
+
 
         <input
           type="number"
@@ -141,31 +147,8 @@ const EditVegetable = () => {
           className="w-full p-2 border rounded"
         >
           <option value="kg">Kg</option>
-          <option value="gram">Gram</option>
-          <option value="dozen">Dozen</option>
           <option value="piece">Piece</option>
         </select>
-
-        <select
-          name="freshness_level"
-          value={formData.freshness_level}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        >
-          <option value="Fresh">Fresh</option>
-          <option value="Very Fresh">Very Fresh</option>
-          <option value="Medium Fresh">Medium Fresh</option>
-        </select>
-
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            name="is_available"
-            checked={formData.is_available}
-            onChange={handleChange}
-          />
-          Available for sale
-        </label>
 
         <button
           type="submit"

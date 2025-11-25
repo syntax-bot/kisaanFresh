@@ -4,19 +4,18 @@ import CartSvg from "../../assets/CartSvg";
 import AddSvg from "../../assets/AddSvg.jsx";
 import userImage from "../../assets/UserImage.jsx";
 import UserImage from "../../assets/UserImage.jsx";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import Search from "../search/Search.jsx";
 import { useSelector } from "react-redux";
 
-
 function Navbar() {
-  const isUserLoggedIn = useSelector(state => state.user.isAuthenticated); 
-  const userRole = useSelector(state => state.user.userInfo?.role); 
-  
+  const isUserLoggedIn = useSelector((state) => state.user.isAuthenticated);
+  const userRole = useSelector((state) => state.user.userInfo?.role);
+  const location = useLocation();
+  const showSearch = location.pathname === "/home" || location.pathname === "/customer/search";
   const path = userRole === "buyer" ? "/home" : "/seller/my_vegetables";
   return (
     <nav>
-      
       <div className="bg-surface p-2 sm:mx-5 flex  justify-between items-center">
         <Link to={path}>
           <div className="logo ">
@@ -24,10 +23,8 @@ function Navbar() {
           </div>
         </Link>
 
-        {
-          isUserLoggedIn && userRole === "buyer" && <Search />
-        }
-        
+        {isUserLoggedIn && userRole === "buyer" && showSearch && <Search />}
+
         <div className="user">
           {isUserLoggedIn ? (
             userRole === "buyer" ?(<div className="flex">
@@ -55,14 +52,16 @@ function Navbar() {
             </div>)
           ) : (
             <div className="flex">
-              <Link 
-              to={`customer/login`}
-              className="login text-primary px-3 py-1 rounded-3xl hover:text-white hover:bg-primary/75 ">
+              <Link
+                to={`customer/login`}
+                className="login text-primary px-3 py-1 rounded-3xl hover:text-white hover:bg-primary/75 "
+              >
                 Login
               </Link>
-              <Link 
-              to={`customer/register`}
-              className="signup px-3 py-1 rounded-full text-white bg-primary hover:bg-accent ml-2">
+              <Link
+                to={`customer/register`}
+                className="signup px-3 py-1 rounded-full text-white bg-primary hover:bg-accent ml-2"
+              >
                 Sign Up
               </Link>
             </div>

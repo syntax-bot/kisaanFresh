@@ -400,7 +400,7 @@ def get_transactions_buyer(request):
 @login_required
 @csrf_exempt
 def sellers_other_veg(request):
-    seller_id=request.Get("id")
+    seller_id=request.GET.get("id")
     if not seller_id:
         return JsonResponse({"error": "Seller ID required"}, status=400)
 
