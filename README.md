@@ -8,8 +8,6 @@
 
 - secure payment  and fair delivery
 
-- Product aging detection : Highlights products that are getting old to help farmers manage inventory and pricingnew edit by samarth 
-
 new edit by samarth 
 ### Benefits 
 Helps farmers maximize profits and reduce waste 
