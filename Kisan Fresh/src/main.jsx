@@ -42,6 +42,8 @@ import My_Bidding_Veg from "./components/seller/My_Bidding_Veg.jsx";
 import BiddingItemPage from "./components/itempage/BiddingItemPage.jsx";
 import SearchResults from "./components/buyer/SearchResults.jsx";
 import SellerCompletedBidsPage from "./components/seller/CompletedBidsPage.jsx";
+import UpcomingBiddingItemPage from "./components/itempage/UpcomingBiddingItemPage.jsx";
+import BuyerCompletedBidsPage from "./components/buyer/CompletedBidsPage.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -67,6 +69,8 @@ const router = createBrowserRouter(
           <Route path="completed_purchases" element={<CompletedPurchases />} />
           <Route path="pending_purchases" element={<PendingPurchases />} />
           <Route path="nearby_live_bids" element={<BiddingItemPage />} />
+          <Route path="nearby_upcoming_bids" element={<UpcomingBiddingItemPage/>} />
+          <Route path="completed_bids" element={<BuyerCompletedBidsPage/>} />
 
           <Route path="review/:purchaseId/:itemId" element={<AddReview />} />
           <Route path="analysis" element={<BuyerAnalytics />} />
