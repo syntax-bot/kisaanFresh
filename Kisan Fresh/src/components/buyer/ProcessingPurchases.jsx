@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { LineWave } from "react-loader-spinner";
-import { Link } from "react-router";
+import Loader from "../misc/Loader";
 
-const CompletedPurchases = () => {
+const ProcessingPurchases = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedPurchase, setSelectedPurchase] = useState(null);
@@ -15,7 +14,7 @@ const CompletedPurchases = () => {
   const [error, setError] = useState("");
 
   const handleReviewSubmit = async (purchaseId, itemId, comment, rating) => {
-    if(rating === 0){
+    if (rating === 0) {
       toast.error("Please provide a rating");
       return;
     }
@@ -25,7 +24,7 @@ const CompletedPurchases = () => {
     }
 
     try {
-      console.log({itemId , purchaseId})
+      console.log({ itemId, purchaseId });
       await axios.post(
         "http://127.0.0.1:8000/buyer/review/add/",
         {
@@ -40,11 +39,7 @@ const CompletedPurchases = () => {
     } catch (err) {
       toast.error(err.response?.data?.error || "Failed to submit review");
     }
-    setRating(0);
-    setComment("");
   };
-
-
 
   const fetchCompletedPurchases = async () => {
     setLoading(true);
@@ -69,7 +64,7 @@ const CompletedPurchases = () => {
   if (loading) {
     return (
       <div className="text-center py-20 text-lg font-semibold">
-        Loading purchases...
+        <Loader width={40} height={40} />
       </div>
     );
   }
@@ -93,7 +88,7 @@ const CompletedPurchases = () => {
   return (
     <div className="min-h-screen bg-gray-50 px-4 sm:px-8 py-20">
       <h1 className="text-3xl font-bold text-green-700 text-center mb-10">
-        Completed Purchases
+        Processing Purchases
       </h1>
 
       <div className="space-y-6 max-w-4xl mx-auto">
@@ -118,19 +113,7 @@ const CompletedPurchases = () => {
                     <span>
                       {item.vegetable_name} ({item.quantity} units)
                     </span>
-                    <span>
-                      ₹{item.total_price}
-                      <button
-                        onClick={() => {
-                          setShowDialog(true)
-                          setSelectedItem(item.item_id)
-                          setSelectedPurchase(purchase.purchase_id)
-                        }}
-                        className="ml-4 px-2 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
-                      >
-                        review
-                      </button>
-                    </span>
+                    <span>₹{item.total_price}</span>
                   </li>
                 ))}
               </ul>
@@ -144,8 +127,8 @@ const CompletedPurchases = () => {
             <div className="mt-3">
               <span
                 className={`px-3 py-1 text-sm rounded-lg ${
-                  purchase.status === "Completed"
-                    ? "bg-green-200 text-green-800"
+                  purchase.status === "Processing"
+                    ? "bg-yellow-200 text-yellow-800"
                     : "bg-gray-200 text-gray-600"
                 }`}
               >
@@ -204,7 +187,12 @@ const CompletedPurchases = () => {
                 <button
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                   onClick={() => {
-                    console.log({selectedItem, selectedPurchase, comment, rating});
+                    console.log({
+                      selectedItem,
+                      selectedPurchase,
+                      comment,
+                      rating,
+                    });
                     handleReviewSubmit(
                       selectedPurchase,
                       selectedItem,
@@ -225,4 +213,4 @@ const CompletedPurchases = () => {
   );
 };
 
-export default CompletedPurchases;
+export default ProcessingPurchases;
