@@ -2,11 +2,9 @@ import random
 from django.core.mail import send_mail
 import requests
 def generate_otp():
-    """Generate a random 6-digit OTP."""
     return str(random.randint(100000, 999999))
 
 def send_email_otp(email, otp):
-    """Send OTP via email."""
     send_mail(
         'Your Kissan Mart OTP',
         f'Your verification code is {otp}',

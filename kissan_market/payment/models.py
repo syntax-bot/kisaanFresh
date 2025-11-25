@@ -27,14 +27,7 @@ class Order(models.Model):
 
     status = models.CharField(max_length=32, choices=STATUS_CHOICES, default="created")
 
-    # Payout info
-    payout_id = models.CharField(max_length=128, null=True, blank=True)
-    payout_status = models.CharField(max_length=32, null=True, blank=True)
-
-    refunded = models.BooleanField(default=False)
-    refunded_amount = models.PositiveIntegerField(null=True, blank=True)
-
-    notes = models.JSONField(null=True, blank=True)
+    
 
     def __str__(self):
         return f"Order {self.id} buyer={self.buyer} seller={self.seller} amount={self.amount}"

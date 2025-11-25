@@ -408,3 +408,66 @@ def sellers_other_veg(request):
     vegetables = Vegetable.objects.filter(seller=seller)[:4]
     data = list(vegetables.values())
     return JsonResponse({"vegetables": data})
+
+
+@login_required
+@csrf_exempt
+def get_review(request,veg_id):
+    if request.method != "GET":
+        return JsonResponse({"error": "Only GET method allowed"}, status=405)
+
+    vegetable = Vegetable.objects.filter(id=veg_id).first()
+    if not vegetable:
+        return JsonResponse({"error": "Vegetable not found"}, status=404)
+    purchase_items = PurchaseItem.objects.filter(vegetable=vegetable)
+    reviews = PurchaseReview.objects.filter(purchase_item__in=purchase_items).select_related("buyer", "purchase_item")
+
+    data = []
+    for r in reviews:
+        data.append({
+            "id": r.id,
+            "buyer": r.buyer.buyer_profile.name,
+            "rating": r.rating,
+            "comment": r.comment,
+            "vegetable": r.purchase_item.vegetable.name,
+            "created_at": r.created_at.strftime("%Y-%m-%d %H:%M"),
+        })
+    return JsonResponse({"data":data},status=200)
+
+
+@csrf_exempt
+@login_required
+def get_processing_orders(request):
+    
+    buyer = request.user 
+
+    processing_orders = (
+        Purchase.objects
+        .filter(buyer=buyer, status="Processing")
+        .prefetch_related("items__vegetable")     # fetch items + vegetables
+        .select_related("seller")                 # fetch seller in same query
+    )
+    order_list = []
+    for order in processing_orders:
+        items = [
+            {
+                "vegetable_name": item.vegetable.name,
+                "quantity": float(item.quantity),
+                "price_per_unit": float(item.price_per_unit),
+                "total_price": float(item.total_price),
+            }
+            for item in order.items.all()
+        ]
+
+        order_list.append({
+            "purchase_id": order.id,
+            "seller_email": order.seller.email,
+            "total_price": float(order.total_price),
+            "status": order.status,
+            "created_at": order.created_at.strftime("%Y-%m-%d %H:%M"),
+            "items": items,
+        })
+
+    return JsonResponse({"processing_orders": order_list}, safe=False)
+
+
