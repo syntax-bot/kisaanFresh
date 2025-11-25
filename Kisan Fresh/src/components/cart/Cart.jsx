@@ -10,6 +10,7 @@ import AddToCartBtn from "../misc/AddToCartBtn";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import Loader from "../misc/Loader.jsx";
+import { toast } from "react-toastify";
 
 const CartPage = () => {
   const cart = useSelector((state) => state.cart.cartItems);
@@ -30,14 +31,21 @@ const CartPage = () => {
     const cartData = cart.map((item) => {
       return { ...item, vegetable_id: item.id };
     });
-    const res = await axios.post(
+    try {
+      const res = await axios.post(
       "http://127.0.0.1:8000/buyer/vegetables/buy/",
       { cart: cartData },
       {
         withCredentials: true,
       }
     );
-    console.log(res);
+    } catch (error) {
+      toast.error("Error processing purchase. Please try again.");
+      setLoading(false);
+      
+      return;
+    }
+    
     setLoading(false);
     dispatch(clearCart())
     navigate("/customer/pending_purchases");
@@ -176,7 +184,11 @@ const CartPage = () => {
                           commandfor="dialog"
                           class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                         >
-                          Cancel
+                          {loading ? (
+                            <Loader width={20} height={20} />
+                          ) : (
+                            "Cancel"
+                          )}
                         </button>
                       </div>
                     </el-dialog-panel>

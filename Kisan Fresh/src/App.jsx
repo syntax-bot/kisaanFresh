@@ -141,7 +141,7 @@ function App() {
             name={item.name}
             price={item.price}
             description={item.description}
-            image={"http://127.0.0.1:8000/media/" + item.image}
+            image={"http://127.0.0.1:8000" + item.image}
             seller_id={item.seller_id}
             stock={item.stock}
             unit={item.unit}
