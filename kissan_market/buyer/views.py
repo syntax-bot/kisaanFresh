@@ -56,9 +56,21 @@ def nearby_vegetables(request):
             nearby_sellers.append(seller)
 
     vegetables = Vegetable.objects.filter(seller__in=[s.user for s in nearby_sellers])
+    result = []
+    for veg in vegetables:
+        result.append({
+            "id": veg.id,
+            "name": veg.name,
+            "price": veg.price,
+            "quantity": veg.stock,
+            "image": veg.image.url if veg.image else None,
+            "seller_id": veg.seller.id, 
+            "unit": veg.unit,
+            "description": veg.description,   
+        })
 
-    data = list(vegetables.values())
-    return JsonResponse({"vegetables": data})
+    return JsonResponse({"vegetables": result})
+   
 
 
 @csrf_exempt

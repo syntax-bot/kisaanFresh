@@ -43,7 +43,6 @@ export default function SellAnalytics() {
     })();
   }, []);
 
-  // 📊 DATA ANALYSIS using useMemo (optimized)
   const {
     totalOrders,
     completed,
@@ -112,9 +111,8 @@ export default function SellAnalytics() {
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 p-6">
-      <h1 className="text-3xl font-bold mb-6">Sell Analytics (Light Theme)</h1>
+      <h1 className="text-3xl font-bold mb-6">Sell Analytics </h1>
 
-      {/* Top Stat Cards */}
       <motion.div
         className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6"
         initial={{ opacity: 0, y: 20 }}
@@ -127,7 +125,6 @@ export default function SellAnalytics() {
         <StatCard label="Cancelled by Seller" value={cancelledBySeller} accent="text-red-500" />
       </motion.div>
 
-      {/* Chart Section */}
       <motion.div
         className="grid grid-cols-1 lg:grid-cols-3 gap-6"
         initial={{ opacity: 0 }}
@@ -136,7 +133,6 @@ export default function SellAnalytics() {
       >
         <div className="lg:col-span-2 space-y-6">
 
-          {/* Orders Over Time */}
           <ChartCard title="Orders Over Time">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={ordersOverTime}>
@@ -149,7 +145,6 @@ export default function SellAnalytics() {
             </ResponsiveContainer>
           </ChartCard>
 
-          {/* Top Vegetables */}
           <ChartCard title="Top Vegetables (by Orders)">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topVegetables}>
