@@ -52,7 +52,7 @@ function Add_veggies() {
       const mspPrice = filtered[0]["2025-26-MSP"];
       if (formData.price < mspPrice/100) {
         setMessage(
-          `Price should be at least the Minimum Support Price (MSP) of ₹${mspPrice /100}`
+          `Price should be at least the Minimum Support Price (MSP) of ₹${mspPrice /100} per kg`
         );
         return;
       }
