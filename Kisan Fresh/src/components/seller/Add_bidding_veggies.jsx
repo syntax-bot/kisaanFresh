@@ -27,14 +27,37 @@ function Add_bidding_veggies() {
     });
   };
 
-  // Handle File Upload
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
   };
 
-  // Submit Form
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+     if(!formData.name || !formData.price || !formData.stock || !formData.description || !image){
+      setMessage("Please fill all required fields " );
+      return;
+    }
+
+    const res = await axios.get("http://127.0.0.1:8000/seller/get_msp/", {
+      withCredentials: true,
+    });
+    console.log(res.data);
+
+    const filtered = res.data.msp_data.filter((item) =>
+      item.Crop.toLowerCase().includes(formData.name.toLowerCase())
+    );
+    console.log(filtered)
+
+    if (filtered.length > 0) {
+      const mspPrice = filtered[0]["2025-26-MSP"];
+      if (formData.price < mspPrice/100) {
+        setMessage(
+          `Price should be at least the Minimum Support Price (MSP) of ₹${mspPrice /100} per kg`
+        );
+        return;
+      }
+    }
 
     const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => {

@@ -23,7 +23,7 @@ const FilterBar = ({ onFilterChange }) => {
 
   return (
     <div className="flex items-center justify-around gap-4 bg-gray-100 p-4 rounded-xl shadow-sm flex-wrap">
-      {/* Variety */}
+
       <div>
         <label className="text-sm font-medium text-gray-700">Variety</label>
         <select
@@ -132,7 +132,7 @@ function App() {
     <>
       <FilterBar onFilterChange={applyFilter} />
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-4">
+      <div className="grid  grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-4">
         {filteredItems.map((item) => (
           item.stock != 0 &&
           <ItemCard

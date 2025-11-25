@@ -62,9 +62,7 @@ function ItemCard(item) {
               </span>
             </p>
           </div>
-          <p>
-            <span className="text-xl mb-1 font-bold text-text">Unit - {unit} </span>
-          </p>
+          <p className="text-sm py-1  text-text">Unit - {unit} </p>
 
           <AddToCartBtn
             itemNum={itemNum}
