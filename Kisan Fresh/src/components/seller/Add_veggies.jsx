@@ -89,7 +89,7 @@ function Add_veggies() {
       </h2>
 
       {message && (
-        <p className="text-center mb-4 font-semibold text-blue-600">
+        <p className="text-center mb-4 font-semibold text-red-600">
           {message}
         </p>
       )}
