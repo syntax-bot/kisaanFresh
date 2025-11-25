@@ -7,29 +7,10 @@ import { useDispatch } from "react-redux";
 import { logout } from "../../feature/userSlice";
 import { clearCart } from "../../feature/cartSlice";
 import { remove_veges_on_logout } from "../../feature/vegetableSlice";
+
 const BuyerDashboard = () => {
-  // const [buyer, setBuyer] = useState(null);
-  // const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  //   // Fetch logged-in buyer profile
-  //   const fetchProfile = async () => {
-  //     try {
-  //       const res = await axios.get("http://127.0.0.1:8000/buyer_profile/", {
-  //         withCredentials: true,
-  //       });
-  //       console.log(res);
-  //       setBuyer(res.data.profile);
-  //     } catch (err) {
-  //       toast.error("Please login first!");
-  //       navigate("/customer/login");
-  //     }
-  //     setLoading(false);
-  //   };
-
-  //   useEffect(() => {
-  //     fetchProfile();
-  //   }, []);
 
   const handleLogout = async () => {
     try {
@@ -46,76 +27,64 @@ const BuyerDashboard = () => {
     }
   };
 
-  // if (loading)
-  //   return (
-  //     <div className="flex justify-center py-20">
-  //       <Loader width={40} height={40} />
-  //     </div>
-  //   );
-
   return (
-    <div className="min-h-screen bg-gray-50 py-20 px-4">
-      <div className="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-8 border">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 py-20 px-4">
+      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-8 border border-green-200">
         <h1 className="text-3xl font-bold text-green-700 text-center mb-6">
           Dashboard
         </h1>
 
-        {/* <div className="text-center mb-10">
-          <p className="text-xl font-semibold">{buyer.name}</p>
-          <p className="text-gray-600">{buyer.email}</p>
-        </div> */}
-
         <div className="flex flex-col gap-4 mb-6">
           <button
             onClick={() => navigate("/customer/profile")}
-            className="py-3 w-full bg-blue-400 text-white rounded-lg hover:bg-blue-600"
+            className="py-3 w-full bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm"
           >
             Profile
           </button>
           <button
             onClick={() => navigate("/customer/nearby_live_bids")}
-            className="py-3 w-full bg-yellow-400 text-white rounded-lg hover:bg-yellow-600"
+            className="py-3 w-full bg-lime-600 text-white rounded-lg hover:bg-lime-700 transition-colors shadow-sm"
           >
             Bid Bazar
           </button>
 
           <button
             onClick={() => navigate("/customer/pending_purchases")}
-            className="py-3 w-full bg-yellow-400 text-white rounded-lg hover:bg-yellow-600"
+            className="py-3 w-full bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors shadow-sm"
           >
             Pending Purchases
           </button>
 
           <button
             onClick={() => navigate("/customer/processing_purchases")}
-            className="py-3 w-full bg-yellow-400 text-white rounded-lg hover:bg-yellow-600"
+            className="py-3 w-full bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors shadow-sm"
           >
             Processing Purchases
           </button>
 
           <button
             onClick={() => navigate("/customer/completed_purchases")}
-            className="py-3 w-full bg-green-400 text-white rounded-lg hover:bg-green-600"
+            className="py-3 w-full bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors shadow-sm"
           >
             Completed Orders
           </button>
 
           <button
             onClick={() => navigate("/customer/cart")}
-            className="py-3 w-full bg-purple-400 text-white rounded-lg hover:bg-purple-600"
+            className="py-3 w-full bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-sm"
           >
             Cart
           </button>
           <button
             onClick={() => navigate("/customer/analysis")}
-            className="py-3 w-full bg-sky-400 text-white rounded-lg hover:bg-sky-600"
+            className="py-3 w-full bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors shadow-sm"
           >
             Analysis
           </button>
 
           <button
             onClick={handleLogout}
-            className="w-full  py-3 bg-red-400 text-white rounded-lg hover:bg-red-600"
+            className="w-full py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-sm"
           >
             Logout
           </button>
