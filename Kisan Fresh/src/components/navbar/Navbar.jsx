@@ -1,6 +1,7 @@
 import React, { use, useEffect } from "react";
 import kisanFreshLogo from "../../assets/kisanfreshlogo-removebg.png";
 import CartSvg from "../../assets/CartSvg";
+import AddSvg from "../../assets/AddSvg.jsx";
 import userImage from "../../assets/UserImage.jsx";
 import UserImage from "../../assets/UserImage.jsx";
 import { Link } from "react-router";
@@ -43,7 +44,7 @@ function Navbar() {
             </div>) : (<div className="flex">
               <Link to={`/seller/add_veggies`}>
                 <button className="cart mx-1 text-primary px-2 py-1 rounded-3xl  ">
-                  <CartSvg />
+                  <AddSvg/>
                 </button>
               </Link>
               <Link to={`/seller/dashboard`}>
