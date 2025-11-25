@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "../misc/Loader";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
 const My_Bidding_Veg = () => {
   const [vegetables, setVegetables] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -92,11 +92,11 @@ const createBid = async (e) => {
       { withCredentials: true }
     );
 
-    alert(res.data.message || "Bid created!");
+    toast(res.data.message || "Bid created!");
     closeBidForm();
     fetchVegetables();
   } catch (err) {
-    alert(err.response?.data?.error || "Error creating bid");
+    toast.error(err.response?.data?.error || "Error creating bid");
   }
 
   setSubmitLoading(false);
@@ -108,7 +108,8 @@ const cancelBid = async (bidId) => {
       `http://127.0.0.1:8000/bidding/Cancel_Bid/${bidId}/`,
       { withCredentials: true }
     );
-    fetchVegetables(); // refresh UI after cancel
+    fetchVegetables();
+    toast("Bid Cancelled Succesfully");// refresh UI after cancel
   } catch (err) {
     console.error(err.response?.data);
   }
@@ -193,33 +194,38 @@ const cancelBid = async (bidId) => {
             </p>
 
             <div className="mt-4">
-              <span
-                className={`px-3 py-1 text-sm rounded-lg ${
-                  veg.is_available
-                    ? "bg-green-200 text-green-800"
-                    : "bg-red-200 text-red-800"
-                }`}
-              >
-                {veg.is_available ? "Available" : "Not Available"}
-                    </span>
-                    {/* Create or Cancel Bid Button */}
-  {veg.bid_id!=null ? (
-    <button
-      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
-      onClick={() => cancelBid(veg.bid_id)}
+  <div className="flex items-center justify-between gap-4">
+    <span
+      className={`px-3 py-1 text-sm rounded-lg ${
+        veg.is_available
+          ? "bg-green-200 text-green-800"
+          : "bg-red-200 text-red-800"
+      }`}
     >
-      Cancel Bid
-    </button>
-  ) : (
-    <button
-      className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
-      onClick={() => openBidForm(veg.id)}
-    >
-      Create Bid
-    </button>
-  )}
+      {veg.is_available ? "Available" : "Not Available"}
+    </span>
+    {/* keep badge inline on wider screens; buttons will appear beside it on md+ */}
+    <div className="hidden md:block" />
+  </div>
 
-            </div>
+  <div className="mt-3">
+    {veg.bid_id != null ? (
+      <button
+        onClick={() => cancelBid(veg.bid_id)}
+        className="w-full md:w-auto block md:inline-block text-center px-4 py-2 md:px-6 md:py-3 rounded-xl font-medium shadow hover:shadow-lg transition-colors duration-150 bg-red-500 hover:bg-red-600 text-white"
+      >
+        Cancel Bid
+      </button>
+    ) : (
+      <button
+        onClick={() => openBidForm(veg.id)}
+        className="w-full md:w-auto block md:inline-block text-center px-4 py-2 md:px-6 md:py-3 rounded-xl font-medium shadow hover:shadow-lg transition-colors duration-150 bg-blue-600 hover:bg-blue-700 text-white"
+      >
+        Create Bid
+      </button>
+    )}
+  </div>
+</div>
           </div>
         ))}
           </div>

@@ -12,7 +12,7 @@ const UpcomingBiddingItemPage = () => {
       const res = await axios.get("http://127.0.0.1:8000/bidding/get_nearby_upcoming_bids/", {
         withCredentials: true,
       });
-
+      console.log(res.data);
       // normalize data similar to live: ensure current_highest_bid exists
       const items = (res.data.upcoming_bidding || []).map((item) => ({
         ...item,

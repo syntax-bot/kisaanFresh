@@ -25,23 +25,38 @@ const BiddingCard = ({ veg, placeBid, handleBidChange, mode = "live" }) => {
         Min Bid: ₹{veg.min_bid_price}/{veg.unit}
       </p>
 
-      <p className="font-semibold text-blue-600 mt-2">
+      
+      {isUpcoming ? (
+        <p className="font-semibold text-blue-600 mt-2">
+        {isUpcoming ? "Starts At: " : "Time Left: "}
+        {countdown.expired
+          ? isUpcoming
+            ? "Started"
+            : "Expired"
+          : `${veg.starting_time}`}
+      </p>
+      ):(<p className="font-semibold text-blue-600 mt-2">
         {isUpcoming ? "Starts In: " : "Time Left: "}
         {countdown.expired
           ? isUpcoming
             ? "Started"
             : "Expired"
           : `${countdown.minutes}m : ${countdown.seconds}s`}
-      </p>
+      </p>)}
 
       <p className="text-orange-600 font-bold mt-2">
-        Highest Bid: ₹{veg.current_highest_bid}
+        <p>
+  {isUpcoming 
+    ? `Starting Bid: ₹${veg.current_highest_bid}` 
+    : `Highest Bid: ₹${veg.current_highest_bid}` }
+</p>
+
       </p>
 
       {/* If it's upcoming, disable bid input or optionally show pre-bid UI */}
       <input
         type="number"
-        className={`border rounded w-full px-3 py-1 mt-3 ${isUpcoming ? "opacity-60 cursor-not-allowed" : ""}`}
+        className={`border rounded w-full px-3 py-1 mt-3 ${isUpcoming ? " cursor-not-allowed bg-primary" : ""}`}
         placeholder={isUpcoming ? "Bidding opens when sale starts" : "Enter your bid"}
         onChange={(e) => handleBidChange(veg.vegetable_id, e.target.value)}
         disabled={isUpcoming}
@@ -49,18 +64,7 @@ const BiddingCard = ({ veg, placeBid, handleBidChange, mode = "live" }) => {
 
       {isUpcoming ? (
         <div className="flex gap-2 mt-2">
-          <button
-            className="bg-gray-400 text-white w-full py-2 rounded cursor-not-allowed"
-            disabled
-          >
-            Place Bid
-          </button>
-          <button
-            className="bg-yellow-500 text-black px-3 py-2 rounded"
-            onClick={() => alert("We'll notify you when this auction starts (placeholder)")}
-          >
-            Notify me
-          </button>
+          
         </div>
       ) : (
         <button

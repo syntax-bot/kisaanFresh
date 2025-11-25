@@ -14,7 +14,8 @@ const CompletedBidsPage = () => {
         "http://127.0.0.1:8000/bidding/seller_completed_bids/",
         { withCredentials: true }
       );
-      setBids(res.data.my_completed_bids || []);
+      console.log(res.data);
+      setBids(res.data.completed_bids || []);
     //   setBids([
     //   {
     //     bid_id: 101,
