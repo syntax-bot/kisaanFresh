@@ -34,12 +34,11 @@ def add_transaction(data):
 def add_vegetable(request):
     if request.method == 'POST':
         try:
-            seller = request.user  # Logged-in seller
+            seller = request.user  
             try:
                 sellerprof=SellerProfile.objects.get(user=seller)
             except SellerProfile.DoesNotExist:
                 return JsonResponse({'error':'Seller_Profile is not there'},status=403)
-            # Ensure that only sellers can add vegetables
             if not hasattr(seller, 'role') or seller.role != "seller":
                 return JsonResponse({'error': 'Only sellers can add vegetables'}, status=403)
 
@@ -51,13 +50,11 @@ def add_vegetable(request):
             description = request.POST.get('description', '')
             freshness_level = request.POST.get('freshness_level', 'Fresh')
             is_available = request.POST.get('is_available', 'true').lower() == 'true'
-            image = request.FILES.get('image')  # ✅ handle uploaded image file
+            image = request.FILES.get('image')  
 
-            # Validate required fields
             if not all([name, price, stock]):
                 return JsonResponse({'error': 'name, price, and stock are required'}, status=400)
 
-            # Create the vegetable record
             vegetable = Vegetable.objects.create(
                 seller=seller,
                 name=name,
@@ -92,14 +89,11 @@ def get_seller_vegetables(request):
     if request.method == 'GET':
         seller = request.user
 
-        # Ensure the logged-in user is a seller
         if not hasattr(seller, 'role') or seller.role != "seller":
                 return JsonResponse({'error': 'Only sellers can view their vegetables'}, status=403)
 
-        # Get all vegetables for this seller
         vegetables = Vegetable.objects.filter(seller=seller)
 
-        # Prepare response data
         veg_list = []
         for veg in vegetables:
             veg_list.append({
@@ -129,10 +123,8 @@ def edit_vegetable(request, veg_id):
         try:
             seller = request.user
 
-            # Ensure the logged-in user is a Seller
             if not hasattr(seller, 'role') or seller.role != "seller":
                 return JsonResponse({'error': 'Only sellers can edit their vegetables'}, status=403)
-            # Get the vegetable belonging to this seller
             try:
                 vegetable = Vegetable.objects.get(id=veg_id, seller=seller)
             except Vegetable.DoesNotExist:
@@ -140,7 +132,6 @@ def edit_vegetable(request, veg_id):
             
             data = json.loads(request.body)
 
-            # Update only provided fields
             vegetable.name = data.get('name', vegetable.name)
             vegetable.variety = data.get('variety', vegetable.variety)
             vegetable.price = data.get('price', vegetable.price)
@@ -178,7 +169,6 @@ def edit_vegetable(request, veg_id):
 @csrf_exempt
 @login_required
 def seller_orders(request):
-    """Return all pending or processing orders for the logged-in seller."""
     try:
         seller = request.user  # Assuming the logged-in user is a seller
 
@@ -209,7 +199,6 @@ def seller_orders(request):
 @csrf_exempt
 @login_required
 def accept_order(request,purchase_id):
-    """Seller accepts a pending order (changes status to processing)."""
     if request.method == "POST":
         try:
             
@@ -217,9 +206,8 @@ def accept_order(request,purchase_id):
             if not purchase_id:
                 return JsonResponse({"error": "purchase_id is required."}, status=400)
 
-            seller = request.user # current logged-in seller
+            seller = request.user 
 
-            # Check if this order belongs to the seller
             purchase = Purchase.objects.filter(
                 id=purchase_id,
                 items__vegetable__seller=seller,
@@ -229,7 +217,6 @@ def accept_order(request,purchase_id):
             if not purchase:
                 return JsonResponse({"error": "Order not found or not pending."}, status=404)
 
-            # Update order status
             purchase.status = "Processing"
             purchase.save()
             send_order_accepted_email(purchase.buyer.email,purchase.id)
@@ -252,7 +239,6 @@ def accept_order(request,purchase_id):
 def decline_order(request,purchase_id):
     
         
-    """Seller declines a pending order (marks it as cancelled and restores stock)."""
     if request.method == "POST":
         try:
             
@@ -260,9 +246,8 @@ def decline_order(request,purchase_id):
             if not purchase_id:
                 return JsonResponse({"error": "purchase_id is required."}, status=400)
 
-            seller = request.user  # Logged-in seller
+            seller = request.user  
 
-            # Find the purchase that belongs to this seller and is still pending
             purchase = Purchase.objects.filter(
                 id=purchase_id,
                 items__vegetable__seller=seller,
@@ -272,40 +257,28 @@ def decline_order(request,purchase_id):
             if not purchase:
                 return JsonResponse({"error": "Order not found or not pending."}, status=404)
 
-            #  Restore stock for all vegetables in this order
             for item in purchase.items.all():
                 veg = item.vegetable
                 veg.stock += item.quantity
                 veg.save()
 
-            #  Mark order as cancelled
             purchase.status = "Cancelled"
             purchase.save()
             
 
             for item in purchase.items.all():
-                # Review for cancelled items = None
                 
                 
 
                 transaction_data = {
-                      # unique for cancelled
                     "buyer": purchase.buyer.email,
                     "seller": seller.email,
 
-                    # Item details
                     "vegetable_name": item.vegetable.name,
                     "variety": item.vegetable.variety,
                     "quantity": float(item.quantity),
                     "total_price": float(item.total_price),
-
-                      
-
-                    # Cancellation info
                     "status": "CancelledBySeller",
-                    
-
-                    # Timestamp
                     "created_at": purchase.created_at.strftime("%Y-%m-%d %H:%M:%S"),
                 }
 
@@ -330,17 +303,13 @@ def decline_order(request,purchase_id):
 @csrf_exempt
 @login_required
 def mark_order_as_completed(request, purchase_id):
-    """
-    Allows seller to mark a 'Processing' order as 'Completed'
-    once delivery is done.
-    """
+    
     try:
-        seller = request.user  # current logged-in seller
+        seller = request.user  
         purchase = Purchase.objects.get(id=purchase_id, seller=seller)
     except Purchase.DoesNotExist:
         return JsonResponse({"error": "Purchase not found or unauthorized."}, status=404)
 
-    # Only allow marking 'Processing' orders as 'Completed'
     if purchase.status != "Processing":
         return JsonResponse({"error": "Only processing orders can be marked as completed."}, status=400)
 
@@ -377,21 +346,16 @@ def mark_order_as_completed(request, purchase_id):
 @csrf_exempt
 @login_required
 def get_transactions_seller(request):
-    # 1. Check if logged-in user is a seller
     if not hasattr(request.user, "role") or request.user.role != "seller":
         return JsonResponse({"error": "Access denied. Only sellers can view this."}, status=403)
 
-    # 2. Allow only GET
     if request.method != "GET":
         return JsonResponse({"error": "Only GET method allowed"}, status=405)
 
-    # 3. Seller email
     seller_email = request.user.email
 
-    # 4. Fetch all transactions for this seller
     transactions = TransactionRecord.objects.filter(seller=seller_email).order_by("-saved_on")
 
-    # 5. Convert to JSON-safe list
     data = [
         {
             
@@ -416,13 +380,10 @@ def get_transactions_seller(request):
 @csrf_exempt
 @login_required
 def get_completed_purchases(request):
-    """
-    Return all completed purchases of the logged-in seller
-    including items, seller, and total price details.
-    """
-    seller = request.user  # current logged-in buyer
     
-    # Fetch completed purchases
+    seller = request.user  
+    
+    
     purchases = Purchase.objects.filter(seller=seller, status="Completed").prefetch_related("items__vegetable", "buyer")
 
     purchase_list = []

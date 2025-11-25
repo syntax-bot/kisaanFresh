@@ -9,9 +9,7 @@ from datetime import timedelta
 import json
 from django.contrib.auth.decorators import login_required
 
-# ----------------------
-# Step 1: Request OTP
-# ----------------------
+
 @csrf_exempt
 def register_seller(request):
     if request.method == "POST":
@@ -21,8 +19,7 @@ def register_seller(request):
         if not email or not mobile:
             return JsonResponse({"error": "Email and mobile are required."})
 
-        role = "seller"  # Fixed role for this endpoint
-        # Check if any user exists with same email or mobile
+        role = "seller"  
         existing_email = User.objects.filter(email=email).first()
         existing_mobile = User.objects.filter(mobile=mobile).first()
 
@@ -31,7 +28,6 @@ def register_seller(request):
 
         if existing_email:
             return JsonResponse({"error": "User already exists with this email."}, status=409)
-        # Check if user already exists with this email
         current_user = User.objects.create(
             email=email,
             mobile=mobile,
@@ -40,20 +36,16 @@ def register_seller(request):
         )
 
         
-        # Generate and store OTP
         email_otp = generate_otp()
         OTP.objects.create(email=email, otp=email_otp)
 
-        # Send OTP via email
         send_email_otp(email, email_otp)
 
         return JsonResponse({"message": f"OTP sent to {role}'s email."})
 
     return JsonResponse({"error": "Invalid request method."})
 
-# ----------------------
-# Step 2: Verify OTP
-# ----------------------
+
 @csrf_exempt
 def verify_otp(request):
     if request.method == "POST":
@@ -63,7 +55,6 @@ def verify_otp(request):
         if not email or not email_otp_entered:
             return JsonResponse({"error": "Email and OTP are required."})
 
-        # 🔹 Determine role from URL
         path = request.path.lower()
         if "seller" in path:
             role = "seller"
@@ -72,15 +63,12 @@ def verify_otp(request):
         else:
             return JsonResponse({"error": "Invalid verification route."})
 
-        # 🔹 Fetch latest OTP
         otp_obj = OTP.objects.filter(email=email).order_by('-created_at').first()
         if not otp_obj or not otp_obj.is_valid():
             return JsonResponse({"error": "OTP expired or not found. Please request again."})
 
-        # 🔹 Validate OTP
         if otp_obj.otp == email_otp_entered:
             try:
-                # Get user with correct role
                 user = User.objects.get(email=email, role=role)
                 user.is_verified = True
                 user.save()
@@ -107,7 +95,6 @@ def request_otp(request):
         if not email:
             return JsonResponse({"error": "Email is required."})
 
-        # Detect role from the API path
         path = request.path.lower()
         required_role = None
 
@@ -119,7 +106,6 @@ def request_otp(request):
         if not required_role:
             return JsonResponse({"error": "Invalid path — role not identified (must include 'buyer' or 'seller')."})
 
-        # Fetch the user with the correct role
         try:
             user = User.objects.get(email=email, role=required_role, is_verified=True)
         except User.DoesNotExist:
@@ -127,11 +113,9 @@ def request_otp(request):
                 "error": f"{required_role.capitalize()} not found or not verified."
             })
 
-        # Generate and save OTP
         otp_code = generate_otp()
         OTP.objects.create(email=email, otp=otp_code)
 
-        # Send OTP email
         send_email_otp(email, otp_code)
 
         return JsonResponse({
@@ -169,13 +153,7 @@ def login_seller(request):
                 "role": seller.role,
             })
 
-            response.set_cookie(
-                key="sessionid",
-                value=request.session.session_key,
-                httponly=True,
-                samesite="Lax",
-                secure=False,
-            )
+            
 
             return response
         
@@ -187,7 +165,7 @@ def login_seller(request):
 @csrf_exempt
 def logout_seller(request):
     if request.method == "POST":
-        logout(request)  # destroy session
+        logout(request)  
         return JsonResponse({"message": "Seller logged out successfully!"})
     
     return JsonResponse({"error": "Invalid request method."})
@@ -200,7 +178,6 @@ def register_buyer(request):
 
         if not email or not mobile:
             return JsonResponse({"error": "Email and Mobile are required."})
-        # Check if any buyer exists with same email or mobile
         existing_email = User.objects.filter(email=email).first()
         existing_mobile = User.objects.filter(mobile=mobile).first()
 
@@ -222,7 +199,6 @@ def register_buyer(request):
                 status=409
             )
 
-        # Create new buyer
         buyer = User.objects.create(
             email=email,
             mobile=mobile,
@@ -232,13 +208,10 @@ def register_buyer(request):
 
         
         
-        # Generate OTP
         email_otp = generate_otp()
 
-        # Store OTP
         OTP.objects.create(email=email, otp=email_otp)
 
-        # Send OTP via email
         send_email_otp(email, email_otp)
 
         return JsonResponse({"message": "OTP sent to email for buyer verification."})
@@ -255,20 +228,17 @@ def login_buyer(request):
         if not email or not otp_entered:
             return JsonResponse({"error": "Email and OTP are required."})
 
-        # Check if buyer exists and is verified
         try:
             buyer = User.objects.get(email=email, is_verified=True, role="buyer")
         except User.DoesNotExist:
             return JsonResponse({"error": "Buyer not found or not verified."})
 
-        # Get latest OTP
         otp_obj = OTP.objects.filter(email=email).order_by('-created_at').first()
         if not otp_obj:
             return JsonResponse({"error": "No OTP found. Please request OTP first."})
 
-        # Validate OTP within 5 minutes
         if otp_obj.otp == otp_entered and timezone.now() - otp_obj.created_at <= timedelta(minutes=5):
-            login(request, buyer)  # Django session-based login
+            login(request, buyer)  
             return JsonResponse({
                 "message": "Buyer login successful!",
                 "buyer_id": buyer.id,
@@ -283,7 +253,7 @@ def login_buyer(request):
 @csrf_exempt
 def logout_buyer(request):
     if request.method == "POST":
-        logout(request)  # destroy session
+        logout(request)  
         return JsonResponse({"message": "Buyer logged out successfully!"})
     
     return JsonResponse({"error": "Invalid request method."})
@@ -294,9 +264,7 @@ def buyer_profile_view(request):
     
     if request.user.role != "buyer":
         return JsonResponse({"error": "Access denied. Only buyers can access this page."}, status=403)
-    # ------------------------------
-    # GET — View buyer profile
-    # ------------------------------
+    
     if request.method == "GET":
         try:
             profile = BuyerProfile.objects.get(user=request.user)
@@ -314,9 +282,7 @@ def buyer_profile_view(request):
         except BuyerProfile.DoesNotExist:
             return JsonResponse({"error": "Profile not found."}, status=404)
 
-    # ------------------------------
-    # POST — Create buyer profile
-    # ------------------------------
+    
     elif request.method == "POST":
         name = request.POST.get("name")
         upi_id = request.POST.get("upi_id")
@@ -343,9 +309,7 @@ def buyer_profile_view(request):
 
         return JsonResponse({"message": "Profile created successfully!"})
 
-    # ------------------------------
-    # PUT — Update buyer profile
-    # ------------------------------
+    
     elif request.method == "PUT":
         import json
 
@@ -376,9 +340,7 @@ def seller_profile_view(request):
         return JsonResponse({"error": "Authentication required. Please log in first."}, status=401)
     if request.user.role != "seller":
         return JsonResponse({"error": "Access denied. Only sellers can access this page."}, status=403)
-    # ------------------------------
-    # GET — View seller profile
-    # ------------------------------
+    
     if request.method == "GET":
         try:
             profile = SellerProfile.objects.get(user=request.user)
@@ -396,9 +358,7 @@ def seller_profile_view(request):
         except SellerProfile.DoesNotExist:
             return JsonResponse({"error": "Profile not found."}, status=404)
 
-    # ------------------------------
-    # POST — Create seller profile
-    # ------------------------------
+    
     elif request.method == "POST":
         name = request.POST.get("name")
         upi_id = request.POST.get("upi_id")
@@ -425,9 +385,7 @@ def seller_profile_view(request):
 
         return JsonResponse({"message": "Seller profile created successfully!"})
 
-    # ------------------------------
-    # PUT — Update seller profile
-    # ------------------------------
+    
     elif request.method == "PUT":
             import json
 
