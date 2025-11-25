@@ -87,7 +87,7 @@ const BuyerDashboard = () => {
           </button>
 
           <button
-            onClick={() => navigate("/customer/pending_purchases")}
+            onClick={() => navigate("/customer/processing_purchases")}
             className="py-3 w-full bg-yellow-400 text-white rounded-lg hover:bg-yellow-600"
           >
             Processing Purchases
