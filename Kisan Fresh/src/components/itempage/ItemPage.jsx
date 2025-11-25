@@ -2,21 +2,22 @@ import React, { use, useEffect } from "react";
 
 import AddToCartBtn from "../misc/AddToCartBtn";
 import ItemCard from "../ItemCard";
-import Rating from "../misc/Rating";
 import Thumbnail from "./Thumbnail";
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-
+import Rating from "../misc/Rating.jsx";
 import {
   addToCart,
   selectItemQuantity,
   decreaseQuantityby1,
 } from "../../feature/cartSlice.js";
+import RatingStars from "../../assets/RatingStars.jsx";
 function ItemPage() {
   const dispatch = useDispatch();
   const location = useLocation();
   const [otherVeggies, setOtherVeggies] = React.useState([]);
+  const [reviews, setReviews] = React.useState([]);
   const {
     id,
     name,
@@ -44,6 +45,15 @@ function ItemPage() {
         console.log(res.data);
         if (res.data.vegetables) {
           setOtherVeggies(res.data.vegetables);
+        }
+
+        const resrev = await axios.get(
+          `http://127.0.0.1:8000/buyer/reviews/${id}/`,
+          { withCredentials: true }
+        );
+        console.log(resrev.data.data);
+        if (resrev.data.data) {
+          setReviews(resrev.data.data);
         }
       } catch (error) {
         console.log(error);
@@ -131,21 +141,32 @@ function ItemPage() {
               <div class="flex items-center gap-1"></div>
             </div>
 
-            <div class="mt-4 space-y-3">
-              <div class="bg-gray-50 p-3 rounded">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <div class="font-medium">Great sound for the price</div>
-                    <div class="text-xs text-gray-500">
-                      by Priya — Nov 2, 2025
+            <div className="mt-4 space-y-3">
+              <div className="mt-4 space-y-3">
+                {reviews.length === 0 && (
+                  <p className="text-sm text-gray-500">No reviews yet.</p>
+                )}
+
+                {reviews.map((rev) => (
+                  <div key={rev.id} className="bg-gray-50 p-3 rounded">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center gap-1 text-yellow-500 text-sm">
+                          
+                          
+
+                          <Rating rating={rev.rating} />
+                        </div>
+
+                        <div className="text-xs text-gray-500">
+                          by {rev.buyer} — {rev.created_at}
+                        </div>
+
+                        <p className="mt-2 text-sm">{rev.comment}</p>
+                      </div>
                     </div>
-                    <p class="mt-2 text-sm">
-                      I was surprised how balanced the audio is. Comfortable for
-                      long use and the battery lasts.
-                    </p>
                   </div>
-                  <div class="text-sm text-gray-600">Verified Purchase</div>
-                </div>
+                ))}
               </div>
             </div>
           </div>

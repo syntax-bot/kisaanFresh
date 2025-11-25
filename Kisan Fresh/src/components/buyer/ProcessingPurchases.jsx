@@ -13,43 +13,17 @@ const ProcessingPurchases = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const handleReviewSubmit = async (purchaseId, itemId, comment, rating) => {
-    if (rating === 0) {
-      toast.error("Please provide a rating");
-      return;
-    }
-    if (!comment.trim()) {
-      toast.error("Comment cannot be empty");
-      return;
-    }
-
-    try {
-      console.log({ itemId, purchaseId });
-      await axios.post(
-        "http://127.0.0.1:8000/buyer/review/add/",
-        {
-          purchase_item_id: itemId,
-          comment,
-          rating,
-        },
-        { withCredentials: true }
-      );
-      toast.success("Review submitted!");
-      fetchCompletedPurchases(); // refresh list
-    } catch (err) {
-      toast.error(err.response?.data?.error || "Failed to submit review");
-    }
-  };
+  
 
   const fetchCompletedPurchases = async () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        "http://127.0.0.1:8000/buyer/purchases/completed/",
+        "http://127.0.0.1:8000/buyer/get_processing/",
         { withCredentials: true }
       );
       console.log(res.data);
-      setPurchases(res.data.completed_purchases || []);
+      setPurchases(res.data.processing_orders || []);
     } catch (err) {
       setError(err.response?.data?.error || "Failed to load purchases");
       toast.error("Login required or server error");
@@ -80,7 +54,7 @@ const ProcessingPurchases = () => {
   if (purchases.length === 0) {
     return (
       <div className="text-center py-20 text-gray-500">
-        <p className="text-lg font-semibold">No completed purchases found.</p>
+        <p className="text-lg font-semibold">No processing purchases found.</p>
       </div>
     );
   }
@@ -100,7 +74,7 @@ const ProcessingPurchases = () => {
             <div className="flex justify-between">
               <p>
                 <span className="font-semibold">Seller:</span>{" "}
-                {purchase.seller_name}
+                {purchase.seller_email}
               </p>
               <p className="text-sm text-gray-500">{purchase.created_at}</p>
             </div>

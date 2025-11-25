@@ -44,6 +44,7 @@ import SearchResults from "./components/buyer/SearchResults.jsx";
 import SellerCompletedBidsPage from "./components/seller/CompletedBidsPage.jsx";
 import UpcomingBiddingItemPage from "./components/itempage/UpcomingBiddingItemPage.jsx";
 import BuyerCompletedBidsPage from "./components/buyer/CompletedBidsPage.jsx";
+import ProcessingPurchases from "./components/buyer/ProcessingPurchases.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -68,6 +69,7 @@ const router = createBrowserRouter(
           <Route path="profile" element={<CustomerProfile />} />
           <Route path="completed_purchases" element={<CompletedPurchases />} />
           <Route path="pending_purchases" element={<PendingPurchases />} />
+          <Route path="processing_purchases" element={<ProcessingPurchases />} />
           <Route path="nearby_live_bids" element={<BiddingItemPage />} />
           <Route path="nearby_upcoming_bids" element={<UpcomingBiddingItemPage/>} />
           <Route path="completed_bids" element={<BuyerCompletedBidsPage/>} />
