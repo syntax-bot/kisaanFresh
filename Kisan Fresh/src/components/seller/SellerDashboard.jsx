@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loader from "../misc/Loader";
 import { useDispatch } from "react-redux";
-
+import { logout } from "../../feature/userSlice";
 const SellerDashboard = () => {
   // const [buyer, setBuyer] = useState(null);
   // const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   //   // Fetch logged-in buyer profile
   //   const fetchProfile = async () => {
   //     try {
@@ -39,6 +39,7 @@ const SellerDashboard = () => {
       dispatch(logout());
       navigate("/seller/login");
     } catch (err) {
+      console.log(err)
       toast.error("Logout failed!");
     }
   };
